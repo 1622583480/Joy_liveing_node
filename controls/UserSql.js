@@ -85,7 +85,8 @@ function UserInfo(params, callback) {
     })
 }
 function updateprofile(params, callback) {
-
+    
+    let sql = `update user set (username,password,userdate,uuid,gender,name) where uuid=`
 }
 const UserSQL = {
     UserInquire,

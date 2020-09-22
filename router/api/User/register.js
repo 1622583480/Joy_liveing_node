@@ -1,15 +1,15 @@
 const { UserAddUser } = require('../../../controls/UserSql')
 
 module.exports = function register(req, res) {
-    let { UserName, Password } = req.fields
-    if (typeof UserName === 'undefined' || typeof Password === 'undefined') {
+    let { username, password } = req.fields
+    if (typeof username === 'undefined' || typeof password === 'undefined') {
         res.json({
-            code: 501,
+            code: 301,
         })
         return
     }
     try {
-        UserAddUser([UserName, Password], (result) => {
+        UserAddUser([username, password], (result) => {
             res.json(result)
             return
         })
