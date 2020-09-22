@@ -1,0 +1,38 @@
+{
+  "name": "joy_living",
+  "version": "1.0.0",
+  "description": "这是一个面向C端的项目, 主要出售家庭用具,如家具,空调,床上用品,橱柜等等等 ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=dev nodemon ./bin/www.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1622583480/git-repository-.git"
+  },
+  "keywords": [
+    "Joy_liveing"
+  ],
+  "author": "SnowGuest",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1622583480/git-repository-/issues"
+  },
+  "homepage": "https://github.com/1622583480/git-repository-#readme",
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "http-error": "0.0.6",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.2",
+    "node-uuid": "^1.4.8",
+    "nodemailer": "^6.4.11",
+    "nodemon": "^2.0.4",
+    "socket.io": "^2.3.0"
+  }
+}
