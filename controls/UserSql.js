@@ -4,7 +4,6 @@ const uid = require('node-uuid')
 const { tokenKey } = require('../config/config')
 
 
-
 // 通用的返回 减少代码冗余
 function processing(params, sql, callback) {
     db.query(sql, params).then(res => {
