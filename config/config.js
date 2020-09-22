@@ -18,7 +18,6 @@ const config = {
         multiples: true,
     },
     upfile: {
-
     },
     tokenKey: 'Joy_living_Do_not_modify_the_encryption_rules'
 }
