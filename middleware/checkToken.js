@@ -19,7 +19,6 @@ function checkToken() {
                     tokenMsg: '无效token',
                     content: null
                 }
-
                 next()
                 return
             }
