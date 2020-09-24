@@ -14,9 +14,11 @@ db.query = function (sql, params) {
             }
             Connection.query(sql, params, (err, data) => {// 发起数据库语句请求 
                 if (err) {
+                    // console.log(err)
                     reject({
                         code: 104,
                     })
+                    
                     return
                 }
                 reslove(data)

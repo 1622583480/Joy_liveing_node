@@ -11,6 +11,8 @@ module.exports = function (req, res) {
         })
         return;
     }
+    const { uuid } = NewMaterial
+    let headpoto = null
     // 处理前端的文件 
     if (!(req.files.length <= 0 || req.files === {})) {
         Object.keys(req.files).forEach(key => {
@@ -19,20 +21,27 @@ module.exports = function (req, res) {
                 let ext = req.files[key][item].name.substr(matches);
                 try {
                     fs.renameSync(req.files[key][item].path, `${path.join(__dirname, '../../../public/upload/user')}\\User_${new Date().getTime()}${ext}`)
+                    headpoto = `${path.join(__dirname, '../../../public/upload/user')}\\User_${new Date().getTime()}${ext}`
                 } catch (error) {
                     console.log(error)
                 }
             }
         });
     }
-
-    let MaterialSQL = ``;
-    for (let item in NewMaterial) {
-        MaterialSQL = MaterialSQL + item + '=' + NewMaterial[item] + ','
-    }
-    console.log(MaterialSQl)
-    updateprofile({ MaterialSQL, }, (res) => {
+    let NewMaterialvalue = null;
+    let NewMaterialkey = null;
+    Object.keys(NewMaterial).forEach((item, index) => {
+        if (!(item == 'uuid')) {
+            NewMaterialvalue = [NewMaterial[item], uuid]
+            NewMaterialkey = item
+            updateprofile({ NewMaterialkey, NewMaterialvalue, }, (result) => {
+                console.log(result)
+            })
+        }
 
     })
+    // console.log(NewMaterialvalue)
+
+
 
 }

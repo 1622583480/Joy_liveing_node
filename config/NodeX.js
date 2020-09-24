@@ -1,11 +1,15 @@
-const state = new Date({
+const nodeX = require('../middleware/nodeXObj')
+let state = new nodeX({
     state: {
 
     },
     mutations: {
 
     },
-    active: {
+    actives: {
+
+    },
+    getters: {
 
     }
 });

@@ -28,7 +28,7 @@ async function UserAddUser(params, callback) {
             return
         }
         // 初始化sql语句 以及 初始化默认数据 
-        let sql = `insert into user (username,password,userdate,uuid,gender,name) values (?,?,?,?,?,?)`
+        let sql = `insert into user (username,password,email,userdate,uuid,gender,name) values (?,?,?,?,?,?,?)`
         const uuid = uid.v1()
         params.push(new Date().getTime())
         params.push(uuid)
@@ -85,8 +85,12 @@ function UserInfo(params, callback) {
     })
 }
 function updateprofile(params, callback) {
-    
-    let sql = `update user set (username,password,userdate,uuid,gender,name) where uuid=`
+    let sql = `update user set ${params.NewMaterialkey}=? where uuid=?;`
+    console.log(sql)
+    processing( params.NewMaterialvalue,sql, (res) => {
+        // console.log(res)
+        callback(res)
+    })
 }
 const UserSQL = {
     UserInquire,

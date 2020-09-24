@@ -1,7 +1,7 @@
 const { UserLogin } = require('../../../controls/UserSql')
 module.exports = function (req, res) {
-    let { UserName, Password } = req.fields
-    if (typeof UserName === 'undefined' || typeof Password === 'undefined') {
+    let { username, password } = req.fields
+    if (typeof username === 'undefined' || typeof password === 'undefined') {
         res.json({
             code: 501,
         })
@@ -9,7 +9,7 @@ module.exports = function (req, res) {
     }
     try {
 
-        UserLogin([UserName, Password], (result) => {
+        UserLogin([username, password], (result) => {
             res.json(result)
             return
         })

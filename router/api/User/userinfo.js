@@ -1,5 +1,4 @@
 const { UserInfo } = require('../../../controls/UserSql')
-const jwt = require('jsonwebtoken')
 module.exports = function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
