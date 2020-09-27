@@ -1,4 +1,4 @@
-const { rejects } = require('assert')
+
 const path = require('path')
 let config = {
     port: 7147,
@@ -11,7 +11,6 @@ let config = {
         user: 'root',
         password: '123456',
         database: 'supermarket',
-        multipleStatements: true
     },
     upload: {
         encoding: 'utf-8',
@@ -32,6 +31,7 @@ let config = {
                 "pass": 'nwoflakcjiztcjid' // 邮箱的授权码
             }
         },
+        // 短信生成服务
         verification_code(email, type) {
             let code = {
                 type,
@@ -48,8 +48,12 @@ let config = {
             this.email_user.push(code)
             return code
         },
+        // 短信验证服务
         Verification_code_analysis(codeObj) {
             return new Promise((reslove, rejects) => {
+                if (this.email_user.length <= 0) {
+                    rejects({ code: 601 })
+                }
                 this.email_user.forEach((item, index) => {
                     if (item.email == codeObj.email && codeObj.type == item.type) {
                         if (new Date().getTime() > item.time) {
@@ -61,8 +65,11 @@ let config = {
                             return
                         }
                         reslove({ code: 204 })
+                        return
                     }
                 })
+                rejects({ code: 601 })
+
             })
         },
         email_user: [],
@@ -73,10 +80,22 @@ let config = {
                 }
             })
         },
+        Clean_junk_mail() {
+            this.email_user.forEach((item, index) => {
+                if (new Date().getTime() > item.time) {
+                    this.email_user.splice(index, 1)
+                }
+            })
+        },
         email_text: [
 
         ]
     },
-    tokenKey: 'Joy_living_Do_not_modify_the_encryption_rules'
+    tokenKey: 'Joy_living_Do_not_modify_the_encryption_rules',
+    administratorkey: "Joy_LIVE_HOUTAIGUANLIXITY_DE_HTE_reules"
 }
+setInterval(() => {
+    config.emailserver.Clean_junk_mail()
+}, 1000 * 60)
+
 module.exports = config;

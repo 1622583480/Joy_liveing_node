@@ -1,4 +1,4 @@
-const { UserInfo } = require('../../../controls/UserSql')
+const { } = require('../../../controls/system')
 module.exports = function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
@@ -18,8 +18,16 @@ module.exports = function (req, res) {
         })
         return
     }
-    UserInfo([req.tokenstate.content.username], (result) => {
-        const { name, email, headpoto, synopsis, uuid, gender, datebirth, integral } = result.data
-        res.json({ code:result.code, data: { name, email, headpoto, synopsis, uuid, gender, datebirth, integral } })
-    })
+    const { name, username, password, zoom } = req.fields
+    if (typeof name == "undefined" || typeof username == "undefined" || typeof password == "undefined" || typeof zoom == "undefined") {
+        res.json({
+            code: 301
+        })
+        return
+    }
+    try {
+
+    } catch (error) {
+
+    }
 }

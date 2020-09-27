@@ -8,6 +8,7 @@ module.exports = function register(req, res) {
         })
         return
     }
+
     emailserver.Verification_code_analysis({ email, code, type: 'register' }).then(result => {
         if (result.code == 204) {
             try {
@@ -21,10 +22,7 @@ module.exports = function register(req, res) {
             }
         }
     }).catch((err) => {
-        console.log('验证码校验失败')
-        res.json({
-            code: err.code
-        })
+        res.json(err)
     })
 
 }

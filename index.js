@@ -23,9 +23,10 @@ app.use(Expformidable(upload));
 app.use(cors())
 app.use(checkToken())
 app.use('/', express.static(path.join(__dirname, './public/upload')))
-app.use('/', routes)
+app.use('/api', routes)
 
 
 // 页面配置 
 app.use(router)
 app.listen(port);
+// application/x-www-form-urlencoded

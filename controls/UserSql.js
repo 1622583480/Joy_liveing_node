@@ -27,8 +27,18 @@ async function UserAddUser(params, callback) {
             })
             return
         }
+        const emailsql = `select email from user where email=?;`
+        processing(params[2], emailsql, (resultem) => {
+            if (resultem.length > 0) {
+                callback({
+                    code: 204
+                })
+                return
+            }
+
+        })
         // 初始化sql语句 以及 初始化默认数据 
-        let sql = `insert into user (username,password,email,userdate,uuid,gender,name) values (?,?,?,?,?,?,?)`
+        const sql = `insert into user (username,password,email,userdate,uuid,gender,name) values (?,?,?,?,?,?,?)`
         const uuid = uid.v1()
         params.push(new Date().getTime())
         params.push(uuid)
@@ -63,6 +73,8 @@ function UserLogin(params, callback) {
 
             })
             // callback({ code: 204 })
+        } else {
+            callback({ code: 518, token: undefined })
         }
     })
 }
@@ -86,9 +98,7 @@ function UserInfo(params, callback) {
 }
 function updateprofile(params, callback) {
     let sql = `update user set ${params.NewMaterialkey}=? where uuid=?;`
-    console.log(sql)
-    processing( params.NewMaterialvalue,sql, (res) => {
-        // console.log(res)
+    processing(params.NewMaterialvalue, sql, (res) => {
         callback(res)
     })
 }
@@ -97,7 +107,8 @@ const UserSQL = {
     UserLogin,
     UserAddUser,
     UserInfo,
-    updateprofile
+    updateprofile,
+    processing
 }
 
 module.exports = UserSQL

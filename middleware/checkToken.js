@@ -9,6 +9,11 @@ function checkToken() {
         let token = req.headers.sessiontoken;
         // console.log(token)
         if (typeof token == 'undefined') {
+            req.tokenstate = {
+                tokenCode: undefined,
+                tokenMsg: undefined,
+                content: undefined
+            }
             next()
             return
         }

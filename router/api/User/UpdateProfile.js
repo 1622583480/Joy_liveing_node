@@ -1,6 +1,6 @@
-const { updateprofile } = require('../../../controls/UserSql')
+const { updateprofile } = require('../../../controls/UserSql');
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
 
 
 module.exports = function (req, res) {
@@ -17,17 +17,20 @@ module.exports = function (req, res) {
     if (!(req.files.length <= 0 || req.files === {})) {
         Object.keys(req.files).forEach(key => {
             for (let item in req.files[key]) {
-                let matches = req.files[key][item].name.lastIndexOf(".");
-                let ext = req.files[key][item].name.substr(matches);
+                let matches = req.files[key][item].name.lastIndexOf("."); //这一段 是获取文件后缀的索引值 
+                let ext = req.files[key][item].name.substr(matches);//截取文件后缀 .png .jpg
                 try {
+                    // fs.renameSync 是移动且重命名文件 参数1是旧地址 参数2是新地址 
                     fs.renameSync(req.files[key][item].path, `${path.join(__dirname, '../../../public/upload/user')}\\User_${new Date().getTime()}${ext}`)
                     headpoto = `${path.join(__dirname, '../../../public/upload/user')}\\User_${new Date().getTime()}${ext}`
+                    // 返回给前端的新地址 
                 } catch (error) {
-                    console.log(error)
+                    res.json(error)
                 }
             }
         });
     }
+
     let NewMaterialvalue = null;
     let NewMaterialkey = null;
     Object.keys(NewMaterial).forEach((item, index) => {
@@ -41,7 +44,4 @@ module.exports = function (req, res) {
 
     })
     // console.log(NewMaterialvalue)
-
-
-
 }
