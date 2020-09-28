@@ -27,7 +27,7 @@ module.exports = async function (req, res) {
         return
     }
     try {
-        DELETE_ADDRESS({ username: req.tokenstate.content.username }).then((result) => {
+        DELETE_ADDRESS({ username: req.tokenstate.content.username,index }).then((result) => {
             res.json(result)
         }).catch((err) => {
             res.json(err)

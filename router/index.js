@@ -25,7 +25,9 @@ const resvise_product = require('./api/product/resvise_product')
 const admin_login = require('./api/system/systemlogin')
 const userlist = require('./api/system/userList')
 
-
+const add_indent = require('./api/indent/add_indent')
+const receipt_indent = require('./api/indent/Receipt_indent')
+const pay_indent = require('./api/indent/payindent')
 
 router.post('/user/register', User_Register);
 router.post('/user/login', User_Login);
@@ -49,13 +51,20 @@ router.get('/type_one', type_one)
 router.get('/resvise_product', resvise_product)
 // router.post('/forgetpass', Forgetpass)
 
+
+
 router.post('/system/login', admin_login)
 router.get('/system/user_list',userlist)
+
+router.post('/add_indent',add_indent)
+router.post('/pay_indent',pay_indent)
+router.post('/receipt_indent',receipt_indent)
+
 // {
 //     "用户ID":{
 //         "客服ID":{
 //             text:"聊天内容"
-//         },\
+//         },
 //         "客服ID":{
 //             text:"聊天内容"
 //         },

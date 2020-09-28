@@ -13,13 +13,12 @@ function ALL_ADDRESS(params) {
             })
         })
     })
-
 }
 function DELETE_ADDRESS(params) {
     return new Promise((reslove, reject) => {
         ALL_ADDRESS({ username: params.username }).then(res => {
             if (res.length <= 0) {
-                reslove(updateshipping(newArr, params.username));
+                reslove(updateshipping([], params.username));
                 return
             }
             let newArr = res.splice(params.index, 1);
@@ -50,7 +49,7 @@ function REVISE_ADDRESS(params) {
     return new Promise((reslove, reject) => {
         ALL_ADDRESS({ username: params.username }).then(res => {
             let newArr = res
-            newArr[params.index] = newArrparams.address
+            newArr[params.index] = params.address
             reslove(updateshipping(newArr, params.username))
         })
     })

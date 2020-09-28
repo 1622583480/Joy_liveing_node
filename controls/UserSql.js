@@ -97,7 +97,7 @@ function UserInfo(params, callback) {
     })
 }
 function updateprofile(params, callback) {
-    let sql = `update user set ${params.NewMaterialkey}=? where uuid=?;`
+    let sql = `update user set ${params.NewMaterialkey}=? where username=?;`
     processing(params.NewMaterialvalue, sql, (res) => {
         callback(res)
     })

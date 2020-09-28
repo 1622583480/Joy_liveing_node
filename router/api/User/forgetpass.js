@@ -20,9 +20,8 @@ module.exports = function (req, res) {
         }).catch((err) => {
             res.json(err)
             return
-        });
+        })
     }
-
     if (typeof req.tokenstate.tokenCode == "undefined") {
         const { newpass, uuid, email } = req.fields;
         forgetpass({ newpass, uuid, email }).then((result) => {
@@ -30,7 +29,6 @@ module.exports = function (req, res) {
         }).catch((err) => {
             res.json(err)
         });
-
     }
 }
 

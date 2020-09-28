@@ -7,7 +7,6 @@ module.exports = function (req, res) {
         })
         return
     }
-        
 }
 
 // var a = {

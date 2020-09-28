@@ -8,7 +8,7 @@ function checkToken() {
     return function (req, res, next) {
         let token = req.headers.sessiontoken;
         // console.log(token)
-        if (typeof token == 'undefined') {
+        if (typeof token == 'undefined' ||  token == "null" || token === null) {
             req.tokenstate = {
                 tokenCode: undefined,
                 tokenMsg: undefined,

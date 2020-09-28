@@ -13,8 +13,8 @@ db.query = function (sql, params) {
                 return
             }
             Connection.query(sql, params, (err, data) => {// 发起数据库语句请求 
+                console.log(err,'检查语句')
                 if (err) {
-                    console.log(err)
                     reject({
                         code: 104,
                     })

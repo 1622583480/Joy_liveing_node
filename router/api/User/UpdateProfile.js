@@ -1,9 +1,26 @@
 const { updateprofile } = require('../../../controls/UserSql');
-const fs = require('fs');
-const path = require('path');
+
 
 
 module.exports = function (req, res) {
+    if (req.tokenstate.tokenCode == 401) {
+        res.json({
+            code: 401
+        })
+        return
+    }
+    if (req.tokenstate.tokenCode == 402) {
+        res.json({
+            code: 402
+        })
+        return
+    }
+    if (typeof req.tokenstate.tokenCode == 'undefined') {
+        res.json({
+            code: 301
+        })
+        return
+    }
     const { NewMaterial } = req.fields
     if (!NewMaterial) {
         res.json({
@@ -11,37 +28,15 @@ module.exports = function (req, res) {
         })
         return;
     }
-    const { uuid } = NewMaterial
-    let headpoto = null
     // 处理前端的文件 
-    if (!(req.files.length <= 0 || req.files === {})) {
-        Object.keys(req.files).forEach(key => {
-            for (let item in req.files[key]) {
-                let matches = req.files[key][item].name.lastIndexOf("."); //这一段 是获取文件后缀的索引值 
-                let ext = req.files[key][item].name.substr(matches);//截取文件后缀 .png .jpg
-                try {
-                    // fs.renameSync 是移动且重命名文件 参数1是旧地址 参数2是新地址 
-                    fs.renameSync(req.files[key][item].path, `${path.join(__dirname, '../../../public/upload/user')}\\User_${new Date().getTime()}${ext}`)
-                    headpoto = `${path.join(__dirname, '../../../public/upload/user')}\\User_${new Date().getTime()}${ext}`
-                    // 返回给前端的新地址 
-                } catch (error) {
-                    res.json(error)
-                }
-            }
-        });
-    }
-
     let NewMaterialvalue = null;
     let NewMaterialkey = null;
     Object.keys(NewMaterial).forEach((item, index) => {
-        if (!(item == 'uuid')) {
-            NewMaterialvalue = [NewMaterial[item], uuid]
-            NewMaterialkey = item
-            updateprofile({ NewMaterialkey, NewMaterialvalue, }, (result) => {
-                console.log(result)
-            })
-        }
+        NewMaterialvalue = [NewMaterial[item], req.tokenstate.content.username]
+        NewMaterialkey = item
+        updateprofile({ NewMaterialkey, NewMaterialvalue }, (result) => {
 
+        })
     })
-    // console.log(NewMaterialvalue)
+    res.json({ code: 204 })
 }

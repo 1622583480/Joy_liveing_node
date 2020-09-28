@@ -4,7 +4,6 @@ module.exports = async function (req, res) {
     if (typeof id == "undefined") {
         try {
             let result = await PRODUCT()
-            console.log(result)
             res.json(result)
         } catch (error) {
             res.json(error)
@@ -12,8 +11,7 @@ module.exports = async function (req, res) {
         return
     } else {
         try {
-            let result = await PRODUCT_ID({id})
-            console.log(result)
+            let result = await PRODUCT_ID({ id })
             res.json(result)
         } catch (error) {
             res.json(error)

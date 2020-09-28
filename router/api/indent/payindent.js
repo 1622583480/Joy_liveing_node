@@ -1,4 +1,4 @@
-const { DELECT_PRODUCT } = require('../../../controls/product')
+const { indent_order } = require('../../../controls/indent')
 module.exports = async function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
@@ -18,15 +18,15 @@ module.exports = async function (req, res) {
         })
         return
     }
-    const { index } = req.query
-    if (typeof index == 'undefined') {
+    const { detailid, code } = req.fields
+    if (typeof detailid == "undefined" || typeof code == "undefined") {
         res.json({
-            code: 301
+            code: 204
         })
         return
     }
     try {
-        let result = await DELECT_PRODUCT({ index })
+        let result = await indent_order(['待发货', req.tokenstate.content.username,detailid])
         res.json(result)
     } catch (error) {
         res.json(error)

@@ -20,16 +20,28 @@ function PRODUCT_ID(params) {
             if (data.length <= 0) {
                 reject({ code: 416 })
             }
+            data.forEach((item, index) => {
+                item.img_list = item.img_list.replace(/\"/g, "");
+                item.img_list = item.img_list.replace(/\'/g, "");
+                item.img_list = item.img_list.replace(/\[/g, "");
+                item.img_list = item.img_list.replace(/\]/g, "");
+                console.log(item.img_list)
+            });
             reslove({ code: 204, data })
         })
     })
 }
-function DELECT_PRODUCT(parmas) {
-    return new Promise((reslove, reject) => {
-        // const       
-    })
 
+function DELECT_PRODUCT(params) {
+    return new Promise((reslove, reject) => {
+        const sql = `delete from home_life where id=?;`
+        processing([params.index], sql, (data) => {
+            rearrangement()
+            reslove({ code: 204 })
+        })
+    })
 }
+
 function PRODUCT() {
     return new Promise((reslove, reject) => {
         const sql = `select * from home_life;`;
@@ -37,6 +49,13 @@ function PRODUCT() {
             if (data.length <= 0) {
                 reject({ code: 104 })
             }
+            data.forEach((item, index) => {
+                item.img_list = item.img_list.replace(/\"/g, "");
+                item.img_list = item.img_list.replace(/\'/g, "");
+                item.img_list = item.img_list.replace(/\[/g, "");
+                item.img_list = item.img_list.replace(/\]/g, "");
+                item.img_list = item.img_list.split(',')
+            });
             reslove({ code: 204, data })
         })
     })
