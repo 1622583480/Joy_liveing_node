@@ -69,10 +69,19 @@ function all_indent() {
         })
     })
 }
+function id_indent(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `select * from indent where uuid=?`
+        processing([params.username], sql, (data) => {
+            reslove({ coe: 204, data })
+        })
+    })
+}
 module.exports = {
     randomNumber,
     initialize_indent,
     indent_order,
     confirm_receipt,
-    all_indent
+    all_indent,
+    id_indent
 }

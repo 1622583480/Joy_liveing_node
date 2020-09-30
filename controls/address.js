@@ -40,6 +40,7 @@ function ADD_ADDRESS(params) {
         })
     })
 }
+// data[params.index] = {}
 function updateshipping(res, username) {
     let sql = `update user set shippingaddress=? where username=?;`;
     processing([JSON.stringify(res), username], sql, (data) => { })

@@ -1,5 +1,5 @@
-const { } = require('../../../controls/system')
-module.exports = function (req, res) {
+const { all_shopcar } = require('../../../controls/shopcar')
+module.exports = async function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
             code: 401
@@ -18,16 +18,10 @@ module.exports = function (req, res) {
         })
         return
     }
-    const { name, username, password, zoom } = req.fields
-    if (typeof name == "undefined" || typeof username == "undefined" || typeof password == "undefined" || typeof zoom == "undefined") {
-        res.json({
-            code: 301
-        })
-        return
-    }
     try {
-
+        let result = await all_shopcar(req.tokenstate.content.username);
+        res.json(result)
     } catch (error) {
-
+        res.json(eror)
     }
 }

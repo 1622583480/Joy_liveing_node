@@ -1,8 +1,10 @@
 // 固有模块
-const express = require('express')
+const express = require('express');
 const app = express();
 const router = express.Router();
-const path = require('path')
+const path = require('path');
+
+
 // const https = require('https')
 // const fs = require('fs')
 
@@ -13,8 +15,8 @@ const routes = require('./router')
 
 // 第三方中间件或配置
 const cors = require('cors')
-
 const Expformidable = require('express-formidable')
+
 
 // const credentials = {
 //     pfx:  fs.readFileSync(path.join(__dirname, './keys/www.sngblog.cn.pfx')),
@@ -22,10 +24,10 @@ const Expformidable = require('express-formidable')
 // }
 
 // 中间件或配置文件统一配置 
+app.use('/', express.static(path.join(__dirname, './public/upload')))
 app.use(Expformidable(upload));
 app.use(cors())
 app.use(checkToken())
-app.use('/', express.static(path.join(__dirname, './public/upload')))
 app.use('/api', routes)
 
 // const httpsServer = https.createServer(credentials, app)

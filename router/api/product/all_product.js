@@ -1,7 +1,7 @@
-const { PRODUCT, PRODUCT_ID } = require('../../../controls/product')
+const { PRODUCT, PRODUCT_ID, PRODUCT_PAGE } = require('../../../controls/product')
 module.exports = async function (req, res) {
-    const { id } = req.query
-    if (typeof id == "undefined") {
+    const { id, page } = req.query
+    if (typeof id == "undefined" && typeof page == "undefined") {
         try {
             let result = await PRODUCT()
             res.json(result)
@@ -9,7 +9,18 @@ module.exports = async function (req, res) {
             res.json(error)
         }
         return
-    } else {
+    }
+    if (typeof id == "undefined" && typeof page !== "undefined") {
+        try {
+            console.log('走了第二个')
+            let result = await PRODUCT_PAGE({ page })
+            res.json(result)
+        } catch (error) {
+            res.json(error)
+        }
+        return
+    }
+    if (typeof page == "undefined" && typeof id !== "undefined") {
         try {
             let result = await PRODUCT_ID({ id })
             res.json(result)
@@ -18,5 +29,6 @@ module.exports = async function (req, res) {
         }
         return
     }
+
 
 }

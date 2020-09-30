@@ -3,7 +3,7 @@ const path = require('path')
 let config = {
     port: 7147,
     host: 'localhost',
-    base: 'http://localhost:3000',
+    base: 'https://www.sngblog.cn:7147',
     mysqlConfig: {
         connectionLimit: 10,
         host: 'localhost',

@@ -8,6 +8,12 @@ function GET_TYPE_ONE(params) {
             if (data.length <= 0) {
                 reject({ code: 104 })
             }
+            data.forEach((item, index) => {
+                item.img_list = item.img_list.replace(/\"/g, "");
+                item.img_list = item.img_list.replace(/\'/g, "");
+                item.img_list = item.img_list.replace(/\[/g, "");
+                item.img_list = item.img_list.replace(/\]/g, "");
+            });
             reslove({ code: 204, data })
         })
 
@@ -25,12 +31,33 @@ function PRODUCT_ID(params) {
                 item.img_list = item.img_list.replace(/\'/g, "");
                 item.img_list = item.img_list.replace(/\[/g, "");
                 item.img_list = item.img_list.replace(/\]/g, "");
-                console.log(item.img_list)
+            });
+            // item.img_list = item.img_list.split(',')
+            reslove({ code: 204, data })
+        })
+    })
+}
+
+
+
+function PRODUCT_PAGE(params) {
+    return new Promise((reslove, reject) => {
+        const sql = `select * from home_life where id>? and id<=?;`;
+        processing([(params.page - 1) * 10, params.page * 10], sql, (data) => {
+            if (data.length <= 0) {
+                reject({ code: 416 })
+            }
+            data.forEach((item, index) => {
+                item.img_list = item.img_list.replace(/\"/g, "");
+                item.img_list = item.img_list.replace(/\'/g, "");
+                item.img_list = item.img_list.replace(/\[/g, "");
+                item.img_list = item.img_list.replace(/\]/g, "");
             });
             reslove({ code: 204, data })
         })
     })
 }
+
 
 function DELECT_PRODUCT(params) {
     return new Promise((reslove, reject) => {
@@ -76,5 +103,6 @@ module.exports = {
     GET_TYPE_ONE,
     PRODUCT_ID,
     DELECT_PRODUCT,
-    PRODUCT
+    PRODUCT,
+    PRODUCT_PAGE
 }
