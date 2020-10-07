@@ -19,7 +19,7 @@ module.exports = async function (req, res) {
         return
     }
     var { goodsid, num, parameter_id, postscript, address_id, coupon } = req.fields
-    if (typeof parameter_id == "undefined") {
+    if (typeof coupon == "undefined") {
         coupon = 'null'
     }
     if (typeof parameter_id == "undefined") {

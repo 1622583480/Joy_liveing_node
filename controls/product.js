@@ -1,5 +1,4 @@
 const { processing } = require('./UserSql')
-const fs = require('fs')
 
 function GET_TYPE_ONE(params) {
     return new Promise((reslove, reject) => {
@@ -59,11 +58,12 @@ function PRODUCT_PAGE(params) {
 }
 
 
+
+
 function DELECT_PRODUCT(params) {
     return new Promise((reslove, reject) => {
         const sql = `delete from home_life where id=?;`
         processing([params.index], sql, (data) => {
-            rearrangement()
             reslove({ code: 204 })
         })
     })
@@ -89,14 +89,21 @@ function PRODUCT() {
 
 }
 
-function rearrangement() {
-    // 重新排序函数
-    const sql = `alter table home_life drop id;`
-    const sql_two = `alter table home_life add 'id' mediumint(6) primary key not null auto_increment first;`
-    processing([], sql, () => {
-        processing([], sql_two, () => { })
+function add_product(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `insert into home_life (title,price,img_list,introduce,parameter,type_one,type_two) values (?,?,?,?,?,?,?)`
+        processing(params, sql, (data) => {
+            reslove({ code: 204 })
+        })
     })
 }
+
+function resvise_product(params) {
+    return new Promise((reslove,reject) => {
+
+    })  
+}
+
 // alter  table  home_life drop id; 
 // alter table home_life add 'id' mediumint(6) primary key not null auto_increment first;
 module.exports = {
@@ -104,5 +111,7 @@ module.exports = {
     PRODUCT_ID,
     DELECT_PRODUCT,
     PRODUCT,
-    PRODUCT_PAGE
+    PRODUCT_PAGE,
+    add_product,
+    resvise_product
 }

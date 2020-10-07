@@ -1,4 +1,4 @@
-const { all_shopcar } = require('../../../controls/shopcar')
+const { delete_shopcar } = require('../../../controls/shopcar')
 module.exports = async function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
@@ -18,10 +18,14 @@ module.exports = async function (req, res) {
         })
         return
     }
+    const { index } = req.fields
+    if (typeof index == "undefined") {
+        res.json({ code: 301 })
+    }
     try {
-        let result = await all_shopcar({username:req.tokenstate.content.username});
+        let result = await delete_shopcar({ username: req.tokenstate.content.username, index })
         res.json(result)
     } catch (error) {
-        res.json(eror)
+        res.json(error)
     }
 }

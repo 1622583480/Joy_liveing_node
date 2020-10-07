@@ -1,4 +1,4 @@
-const { all_shopcar } = require('../../../controls/shopcar')
+const { exchange } = require('../../../controls/coupon')
 module.exports = async function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
@@ -18,10 +18,13 @@ module.exports = async function (req, res) {
         })
         return
     }
+    const { couponid } = req.fields
     try {
-        let result = await all_shopcar({username:req.tokenstate.content.username});
+        let couponobj = {}
+        couponobj.timer = new Date().getTime();
+        let result = await exchange({ couponid, username: req.tokenstate.content.username })
         res.json(result)
     } catch (error) {
-        res.json(eror)
+        res.json(error)
     }
 }

@@ -1,4 +1,4 @@
-const { all_coupon } = require('../../../../controls/system_coupon/coupon')
+const { all_coupon } = require('../../../../controls/system/coupon')
 module.exports = async function (req, res) {
     try {
         let result = await all_coupon()
@@ -6,5 +6,4 @@ module.exports = async function (req, res) {
     } catch (error) {
         res.json(error)
     }
-    
 }

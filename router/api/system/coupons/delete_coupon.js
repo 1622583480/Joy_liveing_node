@@ -1,4 +1,4 @@
-const { detele_coupon } = require('../../../../controls/system_coupon/coupon')
+const { detele_coupon } = require('../../../../controls/system/coupon')
 module.exports = async function (req, res) {
     const { detailid } = req.fields
     if (typeof detailid == "undefined") {

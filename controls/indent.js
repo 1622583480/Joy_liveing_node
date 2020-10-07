@@ -69,6 +69,18 @@ function all_indent() {
         })
     })
 }
+function page_indent() {
+    return new Promise((reslove, reject) => {
+        let sql = `select * from indent where id>=? and id<=?;`
+        processing([(params.page - 1) * 10, params.page * 10], sql, (data) => {
+            if (data.length <= 0) {
+                reject({ code: 419 }); //无下一个用户
+            }
+            reslove({ code: 204, data })
+            return
+        })
+    })
+}
 function id_indent(params) {
     return new Promise((reslove, reject) => {
         let sql = `select * from indent where uuid=?`
@@ -83,5 +95,6 @@ module.exports = {
     indent_order,
     confirm_receipt,
     all_indent,
-    id_indent
+    id_indent,
+    page_indent
 }

@@ -1,11 +1,21 @@
-const { } = require('../../../controls/product')
-module.exports = function (req, res) {
-    const { title, price, img_list, introduce, paramseter, type_one, type_two } = req.fields
+const { upfile } = require('../../../config/config')
+const { add_product } = require('../../../controls/product')
+module.exports = async function (req, res) {
+    let { title, price, img_list, introduce, parameter, type_one, type_two } = req.fields
     if (typeof title == "undefined" || typeof price == "undefined" || typeof img_list == "undefined" || typeof introduce == "undefined" || typeof type_one == "undefined" || typeof type_two == "undefined") {
         res.json({
             code: 301
         })
         return
+    }
+    if (typeof parameter == "undefined") {
+        parameter = JSON.stringify([])
+    }
+    try {
+        let result = await add_product([title, price, img_list, introduce, parameter, type_one, type_two]);
+        res.json(result)
+    } catch (error) {
+        res.json(error)
     }
 }
 

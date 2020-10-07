@@ -1,5 +1,4 @@
-const { delete_shopcar } = require('../../../controls/shopcar')
-module.exports = async function (req, res) {
+module.exports = function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
             code: 401
@@ -18,10 +17,7 @@ module.exports = async function (req, res) {
         })
         return
     }
-    try {
-        let result = await delete_shopcar()
-        res.json(result)
-    } catch (error) {
-        res.json(error)
-    }
+    res.json({
+        code: 204
+    })
 }

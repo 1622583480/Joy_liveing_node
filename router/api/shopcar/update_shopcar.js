@@ -18,16 +18,15 @@ module.exports = async function (req, res) {
         })
         return
     }
-
+    const { index, num, parameter } = req.fields
+    if (typeof index == "undefined" || typeof num == "undefined" || typeof parameter == "undefined") {
+        res.json({ code: 301 })
+        return
+    }
     try {
-        let result = await amend_shopcar()
+        let result = await amend_shopcar({ index, num, parameter, username: req.tokenstate.content.username })
         res.json(result)
     } catch (error) {
         res.json(error)
     }
 }
-function 输出语句(name) {
-    console.log(name);
-}
-
-输出语句('AAAAA')
