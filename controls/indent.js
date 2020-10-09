@@ -1,4 +1,5 @@
 const { processing } = require('./UserSql');
+const { pay, slect_pay_order } = require('./pay')
 function setTimeDateFmt(s) {  // 个位数补齐十位数
     return s < 10 ? '0' + s : s;
 }
@@ -22,32 +23,28 @@ function randomNumber() {
 
 function initialize_indent(params) {
     return new Promise((reslove, reject) => {
-        let sql = `insert into indent (detailid,orderstatus,goodsid,num,create_time,user_id,parameter_id,postscript,address,coupon) values (?,?,?,?,?,?,?,?,?,?)`
+        let sql = `insert into indent (detailid,orderstatus,goodsid,num,create_time,user_id,parameter,postscript,address,coupon) values (?,?,?,?,?,?,?,?,?,?)`
         processing(params, sql, (data) => {
-            reslove(user_indent({ username: params[5], detailid: params[0] }))
+            reslove({ code: 204 })
         })
     })
 }
 function user_indent(params) {
     return new Promise((reslove, rejetc) => {
-        let sql = `select indent from user where username=?;`
+        let sql = `select * from indent where user_id=?;`
         processing([params.username], sql, (data) => {
-            if (data === null) {
-                let newarr = [];
-                newarr.push(params.detailid)
-                let sql = `update user set indent=? where username=?`
-                processing([newarr, params.username], sql, () => { reslove(204) })
-                return
-            }
-            data.push(params.detailid)
-            processing([data, params.username], sql, () => { reslove(204) })
-            return
+            reslove(data)
         })
     })
 }
 function indent_order(params) {
     return new Promise((reslove, reject) => {
-        let sql = `update indent set orderstatus=? where userid=? and detailid=?`
+        user_indent({ username: params[1] }).then(async data => {
+            let a = await pay(data[0])
+            reslove({code:204,data:a})
+        })
+        return
+        let sql = `update indent set orderstatus=? where user_id=? and detailid=?`
         processing(params, sql, (data) => {
             reslove(204)
         })
@@ -69,9 +66,9 @@ function all_indent() {
         })
     })
 }
-function page_indent() {
+function page_indent(params) {
     return new Promise((reslove, reject) => {
-        let sql = `select * from indent where id>=? and id<=?;`
+        let sql = `select * from indent where id between ? and ?;`
         processing([(params.page - 1) * 10, params.page * 10], sql, (data) => {
             if (data.length <= 0) {
                 reject({ code: 419 }); //无下一个用户
@@ -83,7 +80,7 @@ function page_indent() {
 }
 function id_indent(params) {
     return new Promise((reslove, reject) => {
-        let sql = `select * from indent where uuid=?`
+        let sql = `select * from indent where user_id=?`
         processing([params.username], sql, (data) => {
             reslove({ coe: 204, data })
         })

@@ -18,12 +18,12 @@ module.exports = async function (req, res) {
         })
         return
     }
-    const { index } = req.fields
-    if (typeof index == "undefined") {
+    const { delete_id } = req.fields
+    if (typeof delete_id == "undefined") {
         res.json({ code: 301 })
     }
     try {
-        let result = await delete_shopcar({ username: req.tokenstate.content.username, index })
+        let result = await delete_shopcar({ username: req.tokenstate.content.username, delete_id })
         res.json(result)
     } catch (error) {
         res.json(error)

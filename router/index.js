@@ -54,6 +54,20 @@ const select_user = require('./api/system/select/select_user')
 const updateuser = require('./api/system/updateuser');
 const select_product = require('./api/system/select/select_product.js');
 
+const User_all_indent = require('./api/indent/select_indent/all_order');
+const unpaid = require('./api/indent/select_indent/Unpaid');
+const delivered = require('./api/indent/select_indent/delivered');
+const received= require('./api/indent/select_indent/received');
+const comment= require('./api/indent/select_indent/comment');
+
+
+const add_collect = require('./api/collect/add_collect.js');
+const all_collect = require('./api/collect/all_collect.js');
+const delete_collect = require('./api/collect/delete_collect.js');
+
+
+const select_pay = require('./api/indent/select_pay.js');
+
 
 // 测试通过==================> 用户各种杂七杂八操作
 router.post('/user/register', User_Register); //注册
@@ -104,6 +118,7 @@ router.post('/system/select_product', select_product)
 // 增加订单 订单支付 订单确认收货
 router.post('/add_indent', add_indent)
 router.post('/pay_indent', pay_indent)
+router.post('/select_pay', select_pay)
 router.post('/receipt_indent', receipt_indent)
 
 // 其他接口 
@@ -128,6 +143,15 @@ router.post('/user/delete_shopcar', detele_shopcar)
 router.post('/user/all_shopcar', all_shopcar)
 router.post('/user/update_shopcar', update_shopcar)
 
+router.post('/user/all_indent',User_all_indent)
+router.post('/user/unpaid',unpaid); //待付款
+router.post('/user/delivered',delivered); // 待发货
+router.post('/user/received',received); // 待收货
+router.post('/user/comment',comment); // 待评价
+
+router.post('/user/add_collect',add_collect)
+router.post('/user/all_collect',all_collect)
+router.post('/user/delete_collect',delete_collect)
 // {
 //     "用户ID":{
 //         "客服ID":{

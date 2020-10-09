@@ -18,18 +18,26 @@ module.exports = async function (req, res) {
         })
         return
     }
-    var { goodsid, num, parameter_id, postscript, address_id, coupon } = req.fields
+    var { goodsid, num, parameter, postscript, address, coupon } = req.fields;
+
+    let indentlength = null
+    let result = null
     if (typeof coupon == "undefined") {
         coupon = 'null'
     }
-    if (typeof parameter_id == "undefined") {
-        parameter_id = 'null'
+    if (typeof parameter == "undefined") {
+        parameter = 'null'
     }
-    try {
-        let random = randomNumber()
-        let result = await initialize_indent([random, '未付款', goodsid, num, new Date().getTime(), req.tokenstate.content.username, parameter_id, postscript, address_id,coupon])
-        res.json({ code: result, data: random })
-    } catch (error) {
-        res.json(error)
+    if (goodsid.length == parameter.length == num.length) {
+        indentlength = goodsid.length
     }
+    for (let i = 0; i < indentlength.length; i++) {
+        try {
+            let random = randomNumber()
+            result = await initialize_indent([random, '未付款', goodsid[i], num[i], new Date().getTime(), req.tokenstate.content.username, parameter[i], postscript, address, coupon])
+        } catch (error) {
+            res.json(error)
+        }
+    }
+    res.json({ code: result, data: random })
 }

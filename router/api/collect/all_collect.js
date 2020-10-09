@@ -1,4 +1,4 @@
-const { indent_order } = require('../../../controls/indent')
+const { all_collect } = require('../../../controls/collect')
 module.exports = async function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
@@ -18,20 +18,10 @@ module.exports = async function (req, res) {
         })
         return
     }
-    
-    const { detailid } = req.fields
-    if (typeof detailid == "undefined") {
-        res.json({
-            code: 301
-        })
-        return
-    }
     try {
-        let result = await indent_order(['待发货', req.tokenstate.content.username, detailid])
+        let result = await all_collect({username:req.tokenstate.content.username})
         res.json(result)
     } catch (error) {
         res.json(error)
     }
-
-
 }

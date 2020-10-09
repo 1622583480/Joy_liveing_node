@@ -64,10 +64,12 @@ function DELECT_PRODUCT(params) {
     return new Promise((reslove, reject) => {
         const sql = `delete from home_life where id=?;`
         processing([params.index], sql, (data) => {
+            rearrangement()
             reslove({ code: 204 })
         })
     })
 }
+
 
 function PRODUCT() {
     return new Promise((reslove, reject) => {
@@ -99,11 +101,19 @@ function add_product(params) {
 }
 
 function resvise_product(params) {
-    return new Promise((reslove,reject) => {
+    return new Promise((reslove, reject) => {
 
-    })  
+    })
 }
+function rearrangement() {
+    let sql = `alter table home_life drop id;`
+    let sql_two = `alter table home_life add id int(11) primary key auto_increment first;`
+    processing([], sql, data => {
+        processing([], sql_two, data => {
 
+        })
+    })
+}
 // alter  table  home_life drop id; 
 // alter table home_life add 'id' mediumint(6) primary key not null auto_increment first;
 module.exports = {

@@ -18,12 +18,12 @@ module.exports = async function (req, res) {
         })
         return
     }
-    const { id, num, parameter } = req.fields
-    if (typeof id == "undefined" || typeof num == "undefined" || typeof parameter == "undefined") {
+    const { id, num, parameter_index, title, price, parameter } = req.fields
+    if (typeof id == "undefined" || typeof num == "undefined" || typeof parameter == "undefined" || typeof price == "undefined" || typeof title == "undefined" || typeof parameter_index == "undefined") {
         res.json({ code: 301 })
     }
     try {
-        let result = await add_shopcar({ id, num, parameter ,username: req.tokenstate.content.username})
+        let result = await add_shopcar({price, id, num, parameter,parameter_index, title, username: req.tokenstate.content.username })
         res.json(result)
     } catch (error) {
         res.json(error)
