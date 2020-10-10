@@ -118,13 +118,14 @@ router.post('/system/select_product', select_product)
 // 增加订单 订单支付 订单确认收货
 router.post('/add_indent', add_indent)
 router.post('/pay_indent', pay_indent)
+
 router.post('/select_pay', select_pay)
 router.post('/receipt_indent', receipt_indent)
 
 // 其他接口 
 router.get('/may_you_like'); // 猜你喜欢
-router.get(''); // 闪购
-router.get(''); // 
+// router.get(''); // 闪购
+// router.get(''); // 
 
 
 // router.post('/zfbpay', pay)
@@ -143,12 +144,15 @@ router.post('/user/delete_shopcar', detele_shopcar)
 router.post('/user/all_shopcar', all_shopcar)
 router.post('/user/update_shopcar', update_shopcar)
 
+// 获取订单状态
 router.post('/user/all_indent',User_all_indent)
 router.post('/user/unpaid',unpaid); //待付款
 router.post('/user/delivered',delivered); // 待发货
 router.post('/user/received',received); // 待收货
 router.post('/user/comment',comment); // 待评价
 
+
+// 用户端优惠券的增删查
 router.post('/user/add_collect',add_collect)
 router.post('/user/all_collect',all_collect)
 router.post('/user/delete_collect',delete_collect)

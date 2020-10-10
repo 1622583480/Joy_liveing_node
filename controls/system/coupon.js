@@ -13,10 +13,9 @@ function all_coupon() {
 }
 function add_coupon(params) {
     return new Promise((reslove, reject) => {
-        let sql = `insert into coupon (title,createtime,timer,price,integral) values (?,?,?,?,?)`;
-        // age between 20 and 23;
+        let sql = `insert into coupon (title,createtime,timer,price,integral,remark) values (?,?,?,?,?,?)`;
         processing(params, sql, data => {
-            reslove({ code: 204, data })
+            reslove({ code: 204 })
         })
     })
 }

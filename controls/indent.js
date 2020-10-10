@@ -23,7 +23,7 @@ function randomNumber() {
 
 function initialize_indent(params) {
     return new Promise((reslove, reject) => {
-        let sql = `insert into indent (detailid,orderstatus,goodsid,num,create_time,user_id,parameter,postscript,address,coupon) values (?,?,?,?,?,?,?,?,?,?)`
+        let sql = `insert into indent (detailid,orderstatus,goodsid,num,create_time,user_id,parameter,postscript,address,coupon,indent_collection) values (?,?,?,?,?,?,?,?,?,?,?)`
         processing(params, sql, (data) => {
             reslove({ code: 204 })
         })
@@ -31,22 +31,47 @@ function initialize_indent(params) {
 }
 function user_indent(params) {
     return new Promise((reslove, rejetc) => {
-        let sql = `select * from indent where user_id=?;`
-        processing([params.username], sql, (data) => {
+        let sql = `select * from indent where user_id=? and indent_collection=?;`
+        processing([params.username, params.indent_collection], sql, (data) => {
             reslove(data)
+        })
+    })
+}
+
+function indent_product(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `select price,title from home_life where id=?;`
+        processing([params.id], sql, data => {
+            let pay_obj = {}
+            pay_obj.body = data[0].title + '、'
+            pay_obj.price = data[0].price * params.num
+            reslove(pay_obj)
         })
     })
 }
 function indent_order(params) {
     return new Promise((reslove, reject) => {
-        user_indent({ username: params[1] }).then(async data => {
-            let a = await pay(data[0])
-            reslove({code:204,data:a})
+        let pay_obj = { body: '', price: 0 }
+        user_indent({ username: params[1], indent_collection: params[2] }).then(async data => {
+            for (let i = 0; i < data.length; i++) {
+                try {
+                    let result = await indent_product(data[i])
+                    // console.log(result)
+                    pay_obj.body += result.body
+                    pay_obj.price += result.price
+                    // reslove({ code: 204, data: result })
+                } catch (error) {
+                    reject({ code: 414, error })
+                }
+            }
+            pay_obj.indent_collection = params[2]
+            let zfbURL = await pay(pay_obj)
+            reslove(zfbURL)
         })
         return
         let sql = `update indent set orderstatus=? where user_id=? and detailid=?`
         processing(params, sql, (data) => {
-            reslove(204)
+            reslove({ code: 204 })
         })
     })
 }
@@ -58,6 +83,9 @@ function confirm_receipt(params) {
         })
     })
 }
+
+
+// 后台管理系统的 =====> 
 function all_indent() {
     return new Promise((reslove, reject) => {
         let sql = `select * from indent`

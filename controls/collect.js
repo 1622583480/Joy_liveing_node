@@ -3,8 +3,14 @@ const { processing } = require('./UserSql')
 function add_collect(params) {
     return new Promise((reslove, reject) => {
         all_collect({ username: params.username }).then(({ data }) => {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i] == params.product_id) {
+                    reslove({ code: 204 })
+                    return
+                }
+            }
             data.push(params.product_id)
-            console.log(data, 'aaaaaaaaaaaaaaaaaaaaaaaaaa')
+
             let sql = `update user set collect=? where username=?`;
             processing([[JSON.stringify(data)], params.username], sql, data => {
                 reslove({ code: 204 })
@@ -12,7 +18,6 @@ function add_collect(params) {
         })
     })
 }
-
 function delete_collect(params) {
     return new Promise((reslove, reject) => {
         all_collect({ username: params.username }).then(({ data }) => {

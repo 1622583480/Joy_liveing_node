@@ -2,6 +2,10 @@ const AlipaySdk = require('alipay-sdk').default
 const AlipayFormData = require('alipay-sdk/lib/form').default
 const axios = require('axios').default
 // 初始化插件
+
+
+const Product_subject = `乐居生活官方商品支付`
+
 const alipaySdk = new AlipaySdk({
     appId: '2016102500757494',
     gateway: 'https://openapi.alipaydev.com/gateway.do',
@@ -13,14 +17,14 @@ async function pay(params) {
     // 调用 setMethod 并传入 get，会返回可以跳转到支付页面的 url
     formData.setMethod('get')
     // 配置回调接口
-    formData.addField("notifyUrl", "https://www.sngblog.cn:7147/api/slect_pay_order")
+    formData.addField("notifyUrl", "https://www.sngblog.cn:7147/api/select_pay")
     // 设置参数
     formData.addField('bizContent', {
-        outTradeNo: params.detailid,
+        outTradeNo: params.indent_collection,
         productCode: 'FAST_INSTANT_TRADE_PAY',
-        totalAmount: '0.01',
-        subject: '商品',
-        body: '商品详情',
+        totalAmount: params.price,
+        subject: Product_subject,
+        body: params.body,
     });
     // 请求接口
     const result = await alipaySdk.exec(
@@ -36,26 +40,49 @@ async function slect_pay_order(params) {
     const formData = new AlipayFormData()
     formData.setMethod('get')
     formData.addField('bizContent', {
-        outTradeNo: params.detailid,
+        outTradeNo: params.out_trade_no,
     })
     const result = await alipaySdk.exec(
-        'alipay.trade.page.pay',
+        'alipay.trade.query',
         {},
-        { formData ,validateSign: true},
-        
-    ).then(result => {
-        if (result) {
-            axios.get(result).then(({data}) => {
-                console.log(data)
-            })
-        } 
-    }).catch(error => {
+        { formData },
+    )
+    axios.get(result).then(({ data }) => {
+        let state = data.alipay_trade_query_response;
+        if (state.code === '10000') { // 接口调用成功
+            switch (state.trade_status) {
+                case 'WAIT_BUYER_PAY':
+                    return 7401
+                    break;
+                case 'TRADE_CLOSED':
+                    return 7404
+                    break;
+                case 'TRADE_SUCCESS':
+                    return 7204
+                    break;
+                case 'TRADE_FINISHED':
+                    return 7501
+                    break;
+            }
+        } else if (state.code === '40004') {
+            return 7414
+        }
+    }).catch(err => {
+        return 7102
+    });
 
-        console.log(error, '我走了catch')
+
+}
+function product_gathering(params) {
+    return new Promise((reslove, reject) => {
+        for (let i = 0; i < params.length; i++) {
+            let sql = `select`
+        }
     })
 }
 module.exports = {
     pay,
-    slect_pay_order
+    slect_pay_order,
+    product_gathering
 }
 

@@ -88,6 +88,7 @@ function UserInfo(params, callback) {
         }
         let sql = `select * from user where username='${params[0]}' and password='${res[0].password}';`
         processing([], sql, (res) => {
+            
             if (res.length <= 0) {
                 callback({ code: 414, data: res })
                 return
