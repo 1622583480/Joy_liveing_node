@@ -13,18 +13,18 @@ function all_coupon() {
 }
 function add_coupon(params) {
     return new Promise((reslove, reject) => {
-        let sql = `insert into coupon (title,createtime,timer,price,integral,remark) values (?,?,?,?,?,?)`;
+        let sql = `insert into coupon (title,createtime,timer,price,integral,remark,_id) values (?,?,?,?,?,?,?)`;
         processing(params, sql, data => {
             reslove({ code: 204 })
         })
     })
 }
-function detele_coupon(params) {
+function delete_coupon(params) {
     return new Promise((reslove, reject) => {
-        let sql = `delete from coupon where detailid=?;`
-        processing([params.ddetailid], sql, data => {
+        let sql = `delete from coupon where _id=?;`
+        processing([params._id], sql, data => {
             reslove({ code: 204 })
         })
     })
 }
-module.exports = { all_coupon, add_coupon, detele_coupon }
+module.exports = { all_coupon, add_coupon, delete_coupon }

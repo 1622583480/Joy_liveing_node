@@ -36,42 +36,43 @@ async function pay(params) {
     // result 为可以跳转到支付链接的 url
     return result
 }
-async function slect_pay_order(params) {
+async function select_pay_order(params) {
     const formData = new AlipayFormData()
     formData.setMethod('get')
     formData.addField('bizContent', {
         outTradeNo: params.out_trade_no,
     })
+    console.log(params.out_trade_no, '商家交易单号')
     const result = await alipaySdk.exec(
         'alipay.trade.query',
         {},
         { formData },
     )
-    axios.get(result).then(({ data }) => {
-        let state = data.alipay_trade_query_response;
-        if (state.code === '10000') { // 接口调用成功
-            switch (state.trade_status) {
-                case 'WAIT_BUYER_PAY':
-                    return 7401
-                    break;
-                case 'TRADE_CLOSED':
-                    return 7404
-                    break;
-                case 'TRADE_SUCCESS':
-                    return 7204
-                    break;
-                case 'TRADE_FINISHED':
-                    return 7501
-                    break;
+    return new Promise((reslove, reject) => {
+        axios.get(result).then(({ data }) => {
+            let state = data.alipay_trade_query_response;
+            if (state.code === '10000') { // 接口调用成功
+                switch (state.trade_status) {
+                    case 'WAIT_BUYER_PAY':
+                        reslove(7401)
+                        break;
+                    case 'TRADE_CLOSED':
+                        reslove(7404)
+                        break;
+                    case 'TRADE_SUCCESS':
+                        reslove(7204)
+                        break;
+                    case 'TRADE_FINISHED':
+                        reslove(7501)
+                        break;
+                }
+            } else if (state.code === '40004') {
+                reject(7414)
             }
-        } else if (state.code === '40004') {
-            return 7414
-        }
-    }).catch(err => {
-        return 7102
-    });
-
-
+        }).catch(err => {
+            reject(7102)
+        });
+    })
 }
 function product_gathering(params) {
     return new Promise((reslove, reject) => {
@@ -82,7 +83,7 @@ function product_gathering(params) {
 }
 module.exports = {
     pay,
-    slect_pay_order,
+    select_pay_order,
     product_gathering
 }
 

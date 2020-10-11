@@ -6,9 +6,10 @@ module.exports = function (req, res) {
         Object.keys(req.files).forEach(key => {
             let matches = req.files[key].name.lastIndexOf(".");
             let ext = req.files[key].name.substr(matches);
+            let filesname = new Date().getTime()
             try {
-                fs.renameSync(req.files[key].path, `${path.join(__dirname, `../../../public/upload/img`)}\\IWND${new Date().getTime()}JDNW${ext}`)
-                let img_Url = `${base}/IWND${new Date().getTime()}JDNW${ext}`
+                fs.renameSync(req.files[key].path, `${path.join(__dirname, `../../../public/upload/img`)}\/IWND${filesname}JDNW${ext}`)
+                let img_Url = `${base}/img/IWND${filesname}JDNW${ext}`
                 res.json({ code: 204, img_Url })
             } catch (error) {
                 res.json(error)

@@ -1,4 +1,4 @@
-const { exchange } = require('../../../controls/coupon')
+const { Get_user_coupon } = require('../../../controls/coupon')
 module.exports = async function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
@@ -18,13 +18,10 @@ module.exports = async function (req, res) {
         })
         return
     }
-    const { _id } = req.fields
     try {
-        let couponobj = {}
-        couponobj.createtimer = new Date().getTime();
-        let result = await exchange({ _id, username: req.tokenstate.content.username, couponobj })
-        res.json(result)
+        let result = await Get_user_coupon({ username: req.tokenstate.content.username })
+        res.json({ code: 204, data: result })
     } catch (error) {
-        res.json(error)
+        res.json({ code: 414, data: error })
     }
 }

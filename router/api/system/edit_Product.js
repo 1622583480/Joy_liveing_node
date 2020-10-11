@@ -1,4 +1,4 @@
 module.exports = async function (req, res) {
-    const { title, price ,} = req.fields
+    const { title, price, } = req.fields
 
 }

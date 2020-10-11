@@ -1,5 +1,6 @@
-const { exchange } = require('../../../controls/coupon')
-module.exports = async function (req, res) {
+const { cancel_indent } = require("../../../controls/indent")
+
+module.exports =async function (req, res) {
     if (req.tokenstate.tokenCode == 401) {
         res.json({
             code: 401
@@ -18,11 +19,15 @@ module.exports = async function (req, res) {
         })
         return
     }
-    const { _id } = req.fields
+    const { indent_collection } = req.fields
+    if (typeof indent_collection == "undefined") {
+        res.json({
+            code: 301
+        })
+        return
+    }
     try {
-        let couponobj = {}
-        couponobj.createtimer = new Date().getTime();
-        let result = await exchange({ _id, username: req.tokenstate.content.username, couponobj })
+        let result = await cancel_indent({ username: req.tokenstate.content.username, indent_collection })
         res.json(result)
     } catch (error) {
         res.json(error)

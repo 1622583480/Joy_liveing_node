@@ -1,5 +1,7 @@
 const { processing } = require('./UserSql');
-const { pay, slect_pay_order } = require('./pay')
+const { pay, select_pay_order } = require('./pay')
+const { Get_user_coupon, Set_User_Coupon } = require('./coupon')
+
 function setTimeDateFmt(s) {  // 个位数补齐十位数
     return s < 10 ? '0' + s : s;
 }
@@ -21,22 +23,57 @@ function randomNumber() {
     return orderCode;
 }
 
-function initialize_indent(params) {
+async function initialize_indent(params) {
     return new Promise((reslove, reject) => {
-        let sql = `insert into indent (detailid,orderstatus,goodsid,num,create_time,user_id,parameter,postscript,address,coupon,indent_collection) values (?,?,?,?,?,?,?,?,?,?,?)`
-        processing(params, sql, (data) => {
+        let sql = `insert into indent (detailid,orderstatus,goodsid,num,create_time,user_id,parameter,postscript,address,coupon,indent_collection) values (?,?,?,?,?,?,?,?,?,?,?);`
+        processing(params, sql, async (data) => {
+            // params[params.length - 2] 获取的是优惠券对象   这里进行的是扣除优惠券处理
+            if (params[params.length - 2]) {
+                // 由于优惠券对象已经转json 所以这里转回来
+                let coupon = JSON.parse(params[params.length - 2])
+                try {
+                    let result = await Delete_coupon({ username: params.username, coupon })
+                    if (result == 204) {
+                        reslove({ code: 204 })
+                    }
+                } catch (error) {
+                    console.log(error, "用户创建订单删除用户优惠券失败的异常捕获")
+                }
+            }
             reslove({ code: 204 })
         })
     })
 }
-function user_indent(params) {
-    return new Promise((reslove, rejetc) => {
-        let sql = `select * from indent where user_id=? and indent_collection=?;`
-        processing([params.username, params.indent_collection], sql, (data) => {
-            reslove(data)
-        })
+function Delete_coupon(params) {
+    return new Promise(async (reslove, reject) => {
+        let Deduction = null; // 接收一个优惠券返回值 用于判断
+        try {
+            let couponobj = await Get_user_coupon({ username: params.username })
+            // 返回用户所有的优惠券 ? ? ? 
+            if (couponobj.length <= 0) {
+                reject({ code: 414, message: "未搜索到该用户有优惠券,但是用户已使用优惠券,请注意该用户" })
+                return
+            }
+            for (let i in couponobj) {
+                if (params.coupon._id == couponobj._id) {
+                    Deduction = couponobj.splice(i, 1)
+                    break;
+                }
+            }
+            if (Deduction) {
+                let new_user_coupons = await Set_User_Coupon({ couponobj, username: params.username })
+                if (!(new_user_coupons.code == 204)) {
+                    reject({ code: 414, message: "更新用户的优惠券失败" })
+                } else {
+                    reslove({ code: 204 })
+                }
+            }
+        } catch (error) {
+            reject({ code: 414, data: error, message: "未知错误" })
+        }
     })
 }
+
 
 function indent_product(params) {
     return new Promise((reslove, reject) => {
@@ -50,29 +87,24 @@ function indent_product(params) {
     })
 }
 function indent_order(params) {
-    return new Promise((reslove, reject) => {
+    return new Promise(async (reslove, reject) => {
         let pay_obj = { body: '', price: 0 }
-        user_indent({ username: params[1], indent_collection: params[2] }).then(async data => {
-            for (let i = 0; i < data.length; i++) {
-                try {
-                    let result = await indent_product(data[i])
-                    // console.log(result)
-                    pay_obj.body += result.body
-                    pay_obj.price += result.price
-                    // reslove({ code: 204, data: result })
-                } catch (error) {
-                    reject({ code: 414, error })
+        for (let j in params.indent_collection) {
+            user_indent({ username: params.username, indent_collection: params.indent_collection[j] }).then(async data => {
+                for (let i = 0; i < data.length; i++) {
+                    try {
+                        let result = await indent_product(data[i])
+                        pay_obj.body += result.body
+                        pay_obj.price += result.price
+                    } catch (error) {
+                        reject({ code: 414, error })
+                    }
                 }
-            }
-            pay_obj.indent_collection = params[2]
-            let zfbURL = await pay(pay_obj)
-            reslove(zfbURL)
-        })
-        return
-        let sql = `update indent set orderstatus=? where user_id=? and detailid=?`
-        processing(params, sql, (data) => {
-            reslove({ code: 204 })
-        })
+            })
+        }
+        pay_obj.indent_collection = params.indent_collection
+        let zfbURL = await pay(pay_obj)
+        reslove(zfbURL)
     })
 }
 function confirm_receipt(params) {
@@ -97,7 +129,7 @@ function all_indent() {
 function page_indent(params) {
     return new Promise((reslove, reject) => {
         let sql = `select * from indent where id between ? and ?;`
-        processing([(params.page - 1) * 10, params.page * 10], sql, (data) => {
+        processing([(params.page - 1) * 10 + 1, params.page * 10], sql, (data) => {
             if (data.length <= 0) {
                 reject({ code: 419 }); //无下一个用户
             }
@@ -114,6 +146,31 @@ function id_indent(params) {
         })
     })
 }
+function cancel_indent(params) {
+    return new Promise(async (reslove, reject) => {
+        try {
+            let coupon = await user_indent({ username: params.username, indent_collection: params.indent_collection })
+
+        } catch (error) {
+
+        }
+    })
+}
+function delete_indent(params) {
+    return new Promise((reslove, reject) => {
+
+    })
+}
+function user_indent(params) {
+    return new Promise((reslove, rejetc) => {
+        let sql = `select * from indent where user_id=? and indent_collection=?;`
+        processing([params.username, params.indent_collection], sql, (data) => {
+            reslove(data)
+        })
+    })
+}
+
+
 module.exports = {
     randomNumber,
     initialize_indent,
@@ -121,5 +178,6 @@ module.exports = {
     confirm_receipt,
     all_indent,
     id_indent,
-    page_indent
+    page_indent,
+    cancel_indent
 }

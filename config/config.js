@@ -92,7 +92,14 @@ let config = {
         ]
     },
     tokenKey: 'Joy_living_Do_not_modify_the_encryption_rules',
-    administratorkey: "Joy_LIVE_HOUTAIGUANLIXITY_DE_HTE_reules"
+    administratorkey: "Joy_LIVE_HOUTAIGUANLIXITY_DE_HTE_reules",
+    Obfuscated_encryption(params) {
+        let indent = params[0]
+        for (let i = 1; i < params.length; i++) {
+            indent + params[1]
+        }
+        return indent
+    }
 }
 setInterval(() => {
     config.emailserver.Clean_junk_mail()

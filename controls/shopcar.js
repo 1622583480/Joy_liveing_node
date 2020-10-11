@@ -1,19 +1,21 @@
 const { processing } = require('./UserSql')
 function add_shopcar(params) {
     return new Promise((reslove, reject) => {
-        console.log(params)
         all_shopcar({ username: params.username }).then(({ data }) => {
+            let flag = true
             for (let i = 0; i < data.length; i++) {
-                if (data[i].id == params.id && data[i].parameter_index == params.parameter_index && data[i].title == params.title) {
-                    data[i].num = data[i].num + 1
-                    update_shocar({ data, username: params.username }).then(res => {
-                        reslove(res)
-                    })
-                    return
+                if (data[i].id == params.id && data[i].parameter_index == params.parameter_index && data[i].title == params.title && data[i].price == params.price) {
+                    data[i].num = data[i].num + params.num
+                    flag = false
+                } else {
+                    flag = true
                 }
             }
-            data.push({ id: params.id, num: params.num, parameter: params.parameter, parameter_index: params.parameter_index, title: params.title, price: params.price });
-            data[data.length].delete_id = data.length
+            if (flag) {
+                data.push({ id: params.id, num: params.num, parameter: params.parameter, parameter_index: params.parameter_index, title: params.title, price: params.price });
+                data[data.length - 1].delete_id = data.length
+                console.log(data, '添加完毕删除id')
+            }
             update_shocar({ data, username: params.username }).then(res => {
                 reslove(res)
             })
@@ -32,7 +34,7 @@ function delete_shopcar(params) {
                     return
                 }
             }
-            reject({ code:578})
+            reject({ code: 578 })
 
         })
     })
@@ -53,7 +55,7 @@ function all_shopcar(params) {
         let sql = `select shopcar from user where username=?;`
         processing([params.username], sql, (data) => {
             if (data[0].shopcar == '' || data[0].shopcar === null) {
-                reslove({ code: 204, data: { data: [] } })
+                reslove({ code: 204, data: [] })
             }
             reslove({ code: 204, data: JSON.parse(data[0].shopcar) })
         })

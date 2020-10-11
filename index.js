@@ -25,6 +25,7 @@ const Expformidable = require('express-formidable')
 
 // 中间件或配置文件统一配置 
 app.use('/', express.static(path.join(__dirname, './public/upload')))
+app.use('/img', express.static(path.join(__dirname, './public/upload/img')))
 app.use(Expformidable(upload));
 app.use(cors())
 app.use(checkToken())

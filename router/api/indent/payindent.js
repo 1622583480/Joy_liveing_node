@@ -26,7 +26,7 @@ module.exports = async function (req, res) {
         return
     }
     try {
-        let result = await indent_order(['待发货', req.tokenstate.content.username, indent_collection])
+        let result = await indent_order({ order: '待发货', username: req.tokenstate.content.username, indent_collection })
         res.json(result)
     } catch (error) {
         res.json(error)

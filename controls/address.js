@@ -21,8 +21,8 @@ function DELETE_ADDRESS(params) {
                 reslove(updateshipping([], params.username));
                 return
             }
-            let newArr = res.splice(params.index, 1);
-            reslove(updateshipping(newArr, params.username))
+          res.splice(params.index, 1);
+            reslove(updateshipping(res, params.username))
         })
     })
 }

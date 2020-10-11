@@ -1,4 +1,3 @@
-const { upfile } = require('../../../config/config')
 const { add_product } = require('../../../controls/product')
 module.exports = async function (req, res) {
     let { title, price, img_list, introduce, parameter, type_one, type_two } = req.fields

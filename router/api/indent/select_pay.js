@@ -1,4 +1,4 @@
-const { slect_pay_order } = require('../../../controls/pay')
+const { select_pay_order } = require('../../../controls/pay')
 
 module.exports = async function (req, res) {
     try {

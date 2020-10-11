@@ -57,8 +57,8 @@ const select_product = require('./api/system/select/select_product.js');
 const User_all_indent = require('./api/indent/select_indent/all_order');
 const unpaid = require('./api/indent/select_indent/Unpaid');
 const delivered = require('./api/indent/select_indent/delivered');
-const received= require('./api/indent/select_indent/received');
-const comment= require('./api/indent/select_indent/comment');
+const received = require('./api/indent/select_indent/received');
+const comment = require('./api/indent/select_indent/comment');
 
 
 const add_collect = require('./api/collect/add_collect.js');
@@ -67,6 +67,11 @@ const delete_collect = require('./api/collect/delete_collect.js');
 
 
 const select_pay = require('./api/indent/select_pay.js');
+
+
+const exchange = require('./api/coupons/exchange.js');
+const cancel_indent = require('./api/indent/cancel_indent.js');
+const TEST = require('./api/TEST.js');
 
 
 // 测试通过==================> 用户各种杂七杂八操作
@@ -145,17 +150,25 @@ router.post('/user/all_shopcar', all_shopcar)
 router.post('/user/update_shopcar', update_shopcar)
 
 // 获取订单状态
-router.post('/user/all_indent',User_all_indent)
-router.post('/user/unpaid',unpaid); //待付款
-router.post('/user/delivered',delivered); // 待发货
-router.post('/user/received',received); // 待收货
-router.post('/user/comment',comment); // 待评价
+router.post('/user/all_indent', User_all_indent)
+router.post('/user/unpaid', unpaid); //待付款
+router.post('/user/delivered', delivered); // 待发货
+router.post('/user/received', received); // 待收货
+router.post('/user/comment', comment); // 待评价
 
 
-// 用户端优惠券的增删查
-router.post('/user/add_collect',add_collect)
-router.post('/user/all_collect',all_collect)
-router.post('/user/delete_collect',delete_collect)
+// 用户端收藏的增删查
+router.post('/user/add_collect', add_collect)
+router.post('/user/all_collect', all_collect)
+router.post('/user/delete_collect', delete_collect)
+
+// 用户兑换优惠券
+router.post('/user/exchange',exchange)
+router.post('/user/cancel_indent',cancel_indent) // 取消订单
+
+
+
+router.post('/test',TEST)
 // {
 //     "用户ID":{
 //         "客服ID":{
@@ -186,8 +199,6 @@ router.post('/user/delete_collect',delete_collect)
 //         }
 //     }
 // }
-
-
 
 
 module.exports = router

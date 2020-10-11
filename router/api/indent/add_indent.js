@@ -41,7 +41,7 @@ module.exports = async function (req, res) {
             if (indentlength === 1) {
                 indent_collection = random
             }
-            result = await initialize_indent([random, '未付款', goodsid[i], num[i], new Date().getTime(), req.tokenstate.content.username, parameter[i], postscript, JSON.stringify(address), JSON.stringify(coupon), indent_collection])
+            result = await initialize_indent([random, '待付款', goodsid[i], num[i], new Date().getTime(), req.tokenstate.content.username, parameter[i], postscript, JSON.stringify(address), JSON.stringify(coupon), indent_collection])
         } catch (error) {
             res.json(error)
             return

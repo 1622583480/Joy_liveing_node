@@ -1,12 +1,12 @@
-const { detele_coupon } = require('../../../../controls/system/coupon')
+const { delete_coupon } = require('../../../../controls/system/coupon')
 module.exports = async function (req, res) {
-    const { detailid } = req.fields
-    if (typeof detailid == "undefined") {
+    const { _id } = req.fields
+    if (typeof _id == "undefined") {
         res.json({ code: 301 })
         return
     }
     try {
-        let result = await detele_coupon({ detailid })
+        let result = await delete_coupon({ _id })
         res.json(result)
     } catch (error) {
         res.json(error)
