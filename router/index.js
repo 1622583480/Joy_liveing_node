@@ -74,6 +74,8 @@ const cancel_indent = require('./api/indent/cancel_indent.js');
 const TEST = require('./api/TEST.js');
 
 
+const user_all_coupon = require('./api/coupons/all_coupons')
+
 // 测试通过==================> 用户各种杂七杂八操作
 router.post('/user/register', User_Register); //注册
 router.post('/user/login', User_Login); // 登录
@@ -164,6 +166,10 @@ router.post('/user/delete_collect', delete_collect)
 
 // 用户兑换优惠券
 router.post('/user/exchange',exchange)
+router.get('/user/all_coupon',user_all_coupon)
+
+
+
 router.post('/user/cancel_indent',cancel_indent) // 取消订单
 
 

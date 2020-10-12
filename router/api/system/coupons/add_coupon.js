@@ -1,13 +1,15 @@
 
 const { add_coupon } = require('../../../../controls/system/coupon')
 module.exports = async function (req, res) {
-    const { title, timer, price, integral, remark } = req.fields
-    if (typeof title == "undefined" || typeof timer == "undefined" || typeof price == "undefined" || typeof remark == "undefined") {
+    const { title, timer, price, integral, remark, Preferential } = req.fields
+    if (typeof title == "undefined" || typeof timer == "undefined" || typeof price == "undefined" || typeof remark == "undefined" || typeof integral == "undefined") {
         res.json({ code: 301 })
         return
     }
     try {
-        let result = await add_coupon([title, new Date().getTime(), timer, price, integral, remark, _id()])
+        let _id_value = _id()
+        console.log(_id_value)
+        let result = await add_coupon([title, new Date().getTime(), timer, price, integral, remark, _id_value, Preferential])
         res.json(result)
     } catch (error) {
         res.json(error)
@@ -22,6 +24,5 @@ function _id() {
     if (_id[0] == '0') {
         _id[0] == 5
     }
-    _id.length = 8
-    return _id
+    return _id.slice(0,8)
 }

@@ -20,16 +20,16 @@ module.exports = function (req, res) {
         })
         return
     }
-    const { newemail, code, type } = req.fields
-    if ((newemail == 'undefined' || code == 'undefined' || type == 'undefined')) {
+    const { newemail, code, type, email } = req.fields
+    if ((typeof newemail == 'undefined' || typeof code == 'undefined' || typeof type == 'undefined' || typeof email == "undefined")) {
         res.json({
             code: 301
         })
     }
-    emailserver.Verification_code_analysis({ email: newemail, type, code }).then(async result => {
+    emailserver.Verification_code_analysis({ email, type, code }).then(async result => {
         if (result.code == 204) {
             try {
-                let results =await upemail({ email: newemail, username: req.tokenstate.content.username })
+                let results = await upemail({ email: newemail, username: req.tokenstate.content.username })
                 res.json(results)
                 return
             } catch (error) {

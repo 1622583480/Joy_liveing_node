@@ -1,13 +1,43 @@
-const { select_pay_order } = require('../../../controls/pay')
-
+const { select_pay_order, product_gathering } = require('../../../controls/pay')
 module.exports = async function (req, res) {
-    try {
-        let result = await slect_pay_order(req.fields)
-        console.log(result)
-        res.json(result)
-    } catch (error) {
-        res.json(error)
+    const { out_trade_no, detailid } = req.fields
+    if (detailid) {
+        if (req.tokenstate.tokenCode == 401) {
+            res.json({
+                code: 401
+            })
+            return
+        }
+        if (req.tokenstate.tokenCode == 402) {
+            res.json({
+                code: 402
+            })
+            return
+        }
+        if (typeof req.tokenstate.tokenCode == 'undefined') {
+            res.json({
+                code: 301
+            })
+            return
+        }
+        try {
+            let result = await product_gathering({ detailid })
+            res.json(result)
+        } catch (error) {
+            res.json(error)
+        }
+    } else if (out_trade_no) {
+        try {
+            let result = await select_pay_order({ out_trade_no })
+            console.log(result)
+            res.json(result)
+        } catch (error) {
+            res.json(error)
+        }
+    } else {
+        res.json({ code: 301, message: "毛线都没给我" })
     }
+
 }
 
 var a = {

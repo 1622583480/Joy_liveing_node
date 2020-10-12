@@ -19,29 +19,37 @@ function randomNumber() {
     minutes = setTimeDateFmt(minutes)
     seconds = setTimeDateFmt(seconds)
     let orderCode = now.getFullYear().toString() + month.toString() + day + hour + minutes + seconds + (Math.round(Math.random() * 1000000)).toString();
-    console.log(orderCode)
     return orderCode;
 }
 
 async function initialize_indent(params) {
     return new Promise((reslove, reject) => {
-        let sql = `insert into indent (detailid,orderstatus,goodsid,num,create_time,user_id,parameter,postscript,address,coupon,indent_collection) values (?,?,?,?,?,?,?,?,?,?,?);`
-        processing(params, sql, async (data) => {
-            // params[params.length - 2] 获取的是优惠券对象   这里进行的是扣除优惠券处理
-            if (params[params.length - 2]) {
-                // 由于优惠券对象已经转json 所以这里转回来
-                let coupon = JSON.parse(params[params.length - 2])
-                try {
-                    let result = await Delete_coupon({ username: params.username, coupon })
-                    if (result == 204) {
-                        reslove({ code: 204 })
-                    }
-                } catch (error) {
-                    console.log(error, "用户创建订单删除用户优惠券失败的异常捕获")
-                }
-            }
-            reslove({ code: 204 })
+        let sql = `insert into indent (detailid,orderstatus,goodsid,num,create_time,user_id,parameter,postscript,address,coupon,indent_collection,all_price) values (?,?,?,?,?,?,?,?,?,?,?,?);`
+        processing(params, sql, data => {
+            console.log(data)
+            reslove({ code: 204, data, message: "可能是错误" })
         })
+    })
+}
+function update_user_coupon(params) {
+    return new Promise(async (reslove, reject) => {
+        // params[params.length - 2] 获取的是优惠券对象   这里进行的是扣除优惠券处理
+
+        if (params.coupon && !(params.coupon == 'null')) {
+            // 由于优惠券对象已经转json 所以这里转回来
+            try {
+
+                let result = await Delete_coupon({ username: params.username, coupon: params.coupon })
+                if (result == 204) {
+                    reslove({ code: 204 })
+                } else {
+                    reject(result)
+                }
+            } catch (error) {
+                console.log(error, "用户创建订单删除用户优惠券失败的异常捕获")
+            }
+        }
+        reslove({ code: 204 })
     })
 }
 function Delete_coupon(params) {
@@ -55,7 +63,11 @@ function Delete_coupon(params) {
                 return
             }
             for (let i in couponobj) {
-                if (params.coupon._id == couponobj._id) {
+                if (params.coupon._id == couponobj[i]._id && params.coupon.createtimer == couponobj[i].createtimer) {
+                    if (params.losetimer < new Date().getTime()) {
+                        reject({ code: 414, message: "该用户的优惠券已过期" })
+                        break;
+                    }
                     Deduction = couponobj.splice(i, 1)
                     break;
                 }
@@ -67,6 +79,8 @@ function Delete_coupon(params) {
                 } else {
                     reslove({ code: 204 })
                 }
+            } else {
+                reject({ code: 516 })
             }
         } catch (error) {
             reject({ code: 414, data: error, message: "未知错误" })
@@ -89,32 +103,75 @@ function indent_product(params) {
 function indent_order(params) {
     return new Promise(async (reslove, reject) => {
         let pay_obj = { body: '', price: 0 }
+        try {
+            let result = await create_payment({ username: params.username, pay_obj, indent_collection: params.indent_collection })
+            if (result.coupon) {
+                result.price = result.price - result.coupon.price
+            }
+            let payment_res = await call_pay({ username: params.username, pay_obj })
+            reslove(payment_res)
+        } catch (error) {
+            reject(error)
+        }
+
+    })
+}
+function call_pay(params) { // 走支付模块 
+    return new Promise(async (reslove, reject) => {
+        console.log(params.pay_obj, '拿到的新的支付对象')
+        let zfbURL = await pay(params.pay_obj)
+        reslove({ code: 204, data: zfbURL })
+    })
+}
+function create_payment(params) {
+    return new Promise(async (reslove, reject) => {
+        console.log(params)
+        let tally_order_code = randomNumber()
         for (let j in params.indent_collection) {
-            user_indent({ username: params.username, indent_collection: params.indent_collection[j] }).then(async data => {
+            try {
+                let data = await user_indent({ username: params.username, indent_collection: params.indent_collection[j] })
+                // data 拿到的是创建的订单 
                 for (let i = 0; i < data.length; i++) {
                     try {
                         let result = await indent_product(data[i])
-                        pay_obj.body += result.body
-                        pay_obj.price += result.price
+                        params.pay_obj.body += result.body
+                        params.pay_obj.price += result.price
                     } catch (error) {
                         reject({ code: 414, error })
                     }
                 }
-            })
+                // 拿到 所有的订单 直接生成新的订单集合号 用于批量 控制二级订单集合号码
+                tally_order({ tally_order_code, username: params.username, indent_collection: params.indent_collection[j] })
+                params.pay_obj.tally_order = tally_order_code
+                if (!(JSON.parse(data[0].coupon) === null)) {
+                    params.pay_obj.coupon = JSON.parse(data[0].coupon)
+                }
+
+                reslove(params.pay_obj)
+            } catch (error) {
+                reject(error)
+            }
         }
-        pay_obj.indent_collection = params.indent_collection
-        let zfbURL = await pay(pay_obj)
-        reslove(zfbURL)
     })
 }
+function tally_order(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `update indent set tally_order=? where user_id=? and indent_collection=?;`
+        processing([params.tally_order_code, params.username, params.indent_collection], sql, data => {
+
+        })
+    })
+}
+
 function confirm_receipt(params) {
     return new Pormise((reslove, reject) => {
-        let sql = `update indent set orderstatus=? where userid=? and detailid=?`
+        let sql = `update indent set orderstatus=? where user_id=? and detailid=?`
         processing(params, sql, (data) => {
             reslove(204)
         })
     })
 }
+
 
 
 // 后台管理系统的 =====> 
@@ -179,5 +236,7 @@ module.exports = {
     all_indent,
     id_indent,
     page_indent,
-    cancel_indent
+    cancel_indent,
+    Delete_coupon,
+    update_user_coupon
 }

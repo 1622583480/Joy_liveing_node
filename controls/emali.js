@@ -7,9 +7,9 @@ const { UserInquire, processing } = require('./UserSql')
 
 function emalisend(params) {
     return new Promise((reslove, reject) => {
-
         transporter.sendMail(params, (error, info) => {
             if (error) {
+                
                 reject({
                     code: 414,
                 })

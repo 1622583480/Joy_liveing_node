@@ -24,8 +24,9 @@ function exchange(params) {
         }
         try {
             let result = await Get_user_coupon({ username: params.username });// 获取用户所有的优惠券
+            
             result.push(params.couponobj); //加入优惠券
-            let Exchange_Result = await Set_User_Coupon({ couponobj: params.couponobj, username: params.username })
+            let Exchange_Result = await Set_User_Coupon({ couponobj: result, username: params.username })
             // 更新用户本身的优惠券对象 
             reslove(Exchange_Result)
         } catch (error) {
@@ -48,17 +49,18 @@ function Get_user_coupon(params) {
     return new Promise((reslove, reject) => {
         let sql = `select coupon from user where username=?`
         processing([params.username], sql, data => {
-            if (data.length <= 0) {
+            
+            if (data.length <= 0 || data[0].coupon === null || data[0].coupon == '') {
                 reslove([])
             }
-            reslove(data[0])
+            reslove(JSON.parse(data[0].coupon))
         })
     })
 }
 function Set_User_Coupon(params) {
     return new Promise((reslove, reject) => {
         let sql = `update user set coupon=? where username=?;`
-        processing([params.couponobj, params.username], sql, data => {
+        processing([JSON.stringify(params.couponobj), params.username], sql, data => {
             reslove({ code: 204 })
         })
     })
@@ -75,7 +77,6 @@ function Set_user_integral(params) {
     return new Promise((reslove, reject) => {
         let sql = `update user set integral=? where username=?;`
         processing([params.integral, params.username], sql, data => {
-            console.log(data, '更新用户积分')
         })
     })
 }

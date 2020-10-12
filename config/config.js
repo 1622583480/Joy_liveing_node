@@ -28,7 +28,7 @@ let config = {
             secureConnection: true, // use SSL
             auth: {
                 "user": '1622583480@qq.com', // 邮箱账号
-                "pass": 'nwoflakcjiztcjid' // 邮箱的授权码
+                "pass": 'mtdcyxhuxtewdbee' // 邮箱的授权码
             }
         },
         // 短信生成服务
@@ -50,6 +50,7 @@ let config = {
         },
         // 短信验证服务
         Verification_code_analysis(codeObj) {
+            // 592 用户旧邮箱错误
             return new Promise((reslove, rejects) => {
                 if (this.email_user.length <= 0) {
                     rejects({ code: 601 })

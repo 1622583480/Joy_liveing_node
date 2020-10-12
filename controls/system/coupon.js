@@ -13,7 +13,7 @@ function all_coupon() {
 }
 function add_coupon(params) {
     return new Promise((reslove, reject) => {
-        let sql = `insert into coupon (title,createtime,timer,price,integral,remark,_id) values (?,?,?,?,?,?,?)`;
+        let sql = `insert into coupon (title,createtime,timer,price,integral,remark,_id,Preferential) values (?,?,?,?,?,?,?,?)`;
         processing(params, sql, data => {
             reslove({ code: 204 })
         })

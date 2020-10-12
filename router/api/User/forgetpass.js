@@ -14,6 +14,10 @@ module.exports = function (req, res) {
     }
     if (req.tokenstate.tokenCode == 417) {
         const { newpass, password } = req.fields
+        if(typeof req.tokenstate.content.username =='undefined'){
+            res.json({code:301})
+            return
+        }
         uppass({ username: req.tokenstate.content.username, password, newpass }).then((result) => {
             res.json(result)
             return

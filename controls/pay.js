@@ -1,3 +1,5 @@
+const { processing } = require('./UserSql')
+
 const AlipaySdk = require('alipay-sdk').default
 const AlipayFormData = require('alipay-sdk/lib/form').default
 const axios = require('axios').default
@@ -20,7 +22,7 @@ async function pay(params) {
     formData.addField("notifyUrl", "https://www.sngblog.cn:7147/api/select_pay")
     // 设置参数
     formData.addField('bizContent', {
-        outTradeNo: params.indent_collection,
+        outTradeNo: params.tally_order,
         productCode: 'FAST_INSTANT_TRADE_PAY',
         totalAmount: params.price,
         subject: Product_subject,
@@ -76,9 +78,32 @@ async function select_pay_order(params) {
 }
 function product_gathering(params) {
     return new Promise((reslove, reject) => {
-        for (let i = 0; i < params.length; i++) {
-            let sql = `select`
-        }
+        let sql = `select * from indent where detailid=?;`
+        processing([params.detailid], sql, async data => {
+            if (!(typeof data[0].tally_order)) {
+                reslove({ code: 414 })
+                return
+            }
+            try { 
+                let result = await select_pay_order({ out_trade_no: data[0].tally_order })
+                if (result == 7204) {
+                    reslove({ code: 204 })
+                    return
+                } else if (result == 7401) {
+                    reslove({ code: 7401 })
+                    return
+                } else if (result == 7404) {
+                    reslove({ code: 7401 })
+                    return
+                } else if (result == 7501) {
+                    reslove({ code: 7501 })
+                    return
+                }
+            } catch (error) {
+                reject({ code: error })
+            }
+        })
+
     })
 }
 module.exports = {

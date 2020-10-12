@@ -20,7 +20,7 @@ module.exports = function (req, res) {
         case 'register':
             subject = "【乐居生活】验证码信息"
             break;
-        case "upemali":
+        case "upemail":
             subject = "【乐居生活】更新邮箱验证信息"
             break;
         case "uppass":
