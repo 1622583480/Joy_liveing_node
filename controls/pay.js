@@ -62,16 +62,21 @@ async function select_pay_order(params) {
                         reslove(7404)
                         break;
                     case 'TRADE_SUCCESS':
-                        reslove(7204)
+                        Pay_success({ tally_order: params.out_trade_no }).then(({ code }) => {
+                            reslove(code)
+                        })
                         break;
                     case 'TRADE_FINISHED':
                         reslove(7501)
                         break;
+                    default:
+                        reject(414)
                 }
             } else if (state.code === '40004') {
                 reject(7414)
             }
         }).catch(err => {
+            console.log(err)
             reject(7102)
         });
     })
@@ -80,11 +85,11 @@ function product_gathering(params) {
     return new Promise((reslove, reject) => {
         let sql = `select * from indent where detailid=?;`
         processing([params.detailid], sql, async data => {
-            if (!(typeof data[0].tally_order)) {
+            if (data[0].tally_order === null) {
                 reslove({ code: 414 })
                 return
             }
-            try { 
+            try {
                 let result = await select_pay_order({ out_trade_no: data[0].tally_order })
                 if (result == 7204) {
                     reslove({ code: 204 })
@@ -98,6 +103,9 @@ function product_gathering(params) {
                 } else if (result == 7501) {
                     reslove({ code: 7501 })
                     return
+                } else {
+                    reject({ code: 414 })
+                    return
                 }
             } catch (error) {
                 reject({ code: error })
@@ -106,9 +114,56 @@ function product_gathering(params) {
 
     })
 }
+function Pay_success(params) {
+    console.log(params.tally_order, '我是接口输出')
+    return new Promise((reslove, reject) => {
+        let sql = `update indent set orderstatus=? where tally_order=?;`
+        processing(['待发货', params.tally_order], sql, data => {
+            reslove({ code: 7204 })
+        })
+    })
+}
+
+function refund_indents_clend(params) {
+    return new Promise(async (reslove, reject) => {
+        const formData = new AlipayFormData()
+        formData.setMethod('get')
+        formData.addField('bizContent', {
+            outTradeNo: params.tally_order,
+            refund_amount: parseInt(params.all_price)
+        })
+        console.log(parseInt(params.all_price))
+
+        console.log(params.tally_order, '商家交易单号')
+        const result = await alipaySdk.exec(
+            'alipay.trade.refund',
+            {},
+            { formData },
+        )
+        axios.get(result).then(({ data }) => {
+           
+            let state = data.alipay_trade_refund_response;
+            if (state.code === '10000') { // 接口调用成功
+                if (state.fund_change == "Y") {
+                    reslove(7204)
+                } else {
+                    if (state.msg == 'Success') {
+                        reslove(7204)
+                    } else {
+                        reject(7144)
+                    }
+                }
+            } else if (state.code === '40004') {
+                reject(7414)
+            }
+        }).catch(err => {
+            reject(7102)
+        });
+    })
+}
 module.exports = {
     pay,
     select_pay_order,
-    product_gathering
+    product_gathering,
+    refund_indents_clend
 }
-

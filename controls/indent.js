@@ -1,5 +1,5 @@
 const { processing } = require('./UserSql');
-const { pay, select_pay_order } = require('./pay')
+const { pay, refund_indents_clend } = require('./pay')
 const { Get_user_coupon, Set_User_Coupon } = require('./coupon')
 
 function setTimeDateFmt(s) {  // 个位数补齐十位数
@@ -95,7 +95,7 @@ function indent_product(params) {
         processing([params.id], sql, data => {
             let pay_obj = {}
             pay_obj.body = data[0].title + '、'
-            pay_obj.price = data[0].price * params.num
+            pay_obj.price = parseInt(data[0].price) * parseInt(params.num)
             reslove(pay_obj)
         })
     })
@@ -108,6 +108,9 @@ function indent_order(params) {
             if (result.coupon) {
                 result.price = result.price - result.coupon.price
             }
+            let integral = await all_integral({ username: params.username, pay_obj })
+            let pay_integral = parseInt(result.price) / 100 + parseInt(integral.data.integral)
+            add_integral({ username: params.username, pay_integral })
             let payment_res = await call_pay({ username: params.username, pay_obj })
             reslove(payment_res)
         } catch (error) {
@@ -131,9 +134,10 @@ function create_payment(params) {
             try {
                 let data = await user_indent({ username: params.username, indent_collection: params.indent_collection[j] })
                 // data 拿到的是创建的订单 
+
                 for (let i = 0; i < data.length; i++) {
                     try {
-                        let result = await indent_product(data[i])
+                        let result = await indent_product({ id: data[i].goodsid, num: data[i].num })
                         params.pay_obj.body += result.body
                         params.pay_obj.price += result.price
                     } catch (error) {
@@ -146,12 +150,25 @@ function create_payment(params) {
                 if (!(JSON.parse(data[0].coupon) === null)) {
                     params.pay_obj.coupon = JSON.parse(data[0].coupon)
                 }
-
                 reslove(params.pay_obj)
             } catch (error) {
                 reject(error)
             }
         }
+    })
+}
+function add_integral(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `update user set integral=? where username=?;`
+        processing([params.pay_integral, params.username], sql, data => {})
+    })
+}
+function all_integral(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `select integral from user where username=?;`
+        processing([params.username], sql, data => {
+            reslove({ code: 204, data: data[0] })
+        })
     })
 }
 function tally_order(params) {
@@ -203,11 +220,16 @@ function id_indent(params) {
         })
     })
 }
-function cancel_indent(params) {
+function refund_indent(params) {
     return new Promise(async (reslove, reject) => {
         try {
-            let coupon = await user_indent({ username: params.username, indent_collection: params.indent_collection })
-
+            let money = await pay_indent({ username: params.username, tally_order: params.tally_order })
+            let coupon = await refund_indents_clend({ all_price: money.all_price, username: params.username, tally_order: params.tally_order })
+            // reslove(coupon)
+            if (coupon == 7204) {
+                let result = await delete_indent({ username: params.username, tally_order: params.tally_order })
+                reslove(result)
+            }
         } catch (error) {
 
         }
@@ -215,7 +237,10 @@ function cancel_indent(params) {
 }
 function delete_indent(params) {
     return new Promise((reslove, reject) => {
-
+        let sql = `update indent set orderstatus=? where user_id=? and tally_order=?`;
+        processing(['已退款', params.username, params.tally_order], sql, data => {
+            reslove({ code: 204 })
+        })
     })
 }
 function user_indent(params) {
@@ -226,7 +251,14 @@ function user_indent(params) {
         })
     })
 }
-
+function pay_indent(params) {
+    return new Promise((reslove, rejetc) => {
+        let sql = `select * from indent where user_id=? and tally_order=?;`
+        processing([params.username, params.tally_order], sql, (data) => {
+            reslove(data[0])
+        })
+    })
+}
 
 module.exports = {
     randomNumber,
@@ -236,7 +268,8 @@ module.exports = {
     all_indent,
     id_indent,
     page_indent,
-    cancel_indent,
+    refund_indent,
     Delete_coupon,
-    update_user_coupon
+    update_user_coupon,
+    all_integral
 }

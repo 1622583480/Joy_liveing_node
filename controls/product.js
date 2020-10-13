@@ -7,6 +7,7 @@ function GET_TYPE_ONE(params) {
             if (data.length <= 0) {
                 reject({ code: 104 })
             }
+            console.log(data)
             data.forEach((item, index) => {
                 item.img_list = item.img_list.replace(/\"/g, "");
                 item.img_list = item.img_list.replace(/\'/g, "");

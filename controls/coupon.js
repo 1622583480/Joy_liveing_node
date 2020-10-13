@@ -18,13 +18,13 @@ function exchange(params) {
             params.couponobj._id = result._id
             params.couponobj.price = result.price
             params.couponobj.title = result.title
-
+            params.couponobj.Preferential = result.Preferential
         } catch (error) {
             reslove(error)
         }
         try {
             let result = await Get_user_coupon({ username: params.username });// 获取用户所有的优惠券
-            
+
             result.push(params.couponobj); //加入优惠券
             let Exchange_Result = await Set_User_Coupon({ couponobj: result, username: params.username })
             // 更新用户本身的优惠券对象 
@@ -49,7 +49,7 @@ function Get_user_coupon(params) {
     return new Promise((reslove, reject) => {
         let sql = `select coupon from user where username=?`
         processing([params.username], sql, data => {
-            
+
             if (data.length <= 0 || data[0].coupon === null || data[0].coupon == '') {
                 reslove([])
             }
@@ -80,9 +80,18 @@ function Set_user_integral(params) {
         })
     })
 }
+function all_coupon_sysytem(params) {
+    return new Promise((reslove,reject)=>{
+        let sql = `select * from coupon`
+        processing([],sql,data=>{
+            reslove(data)
+        })
+    })
+}
 module.exports = {
     exchange,
     Get_user_coupon,
     Get_Coupon,
-    Set_User_Coupon
+    Set_User_Coupon,
+    all_coupon_sysytem
 }

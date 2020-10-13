@@ -26,7 +26,7 @@ module.exports = async function (req, res) {
         return
     }
     try {
-        let result = await confirm_receipt(['待评价', req.tokenstate.content.username,detailid])
+        let result = await confirm_receipt(['交易完成', req.tokenstate.content.username,detailid])
         res.json(result)
     } catch (error) {
         res.json(error)

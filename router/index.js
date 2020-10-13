@@ -70,12 +70,18 @@ const select_pay = require('./api/indent/select_pay.js');
 
 
 const exchange = require('./api/coupons/exchange.js');
-const cancel_indent = require('./api/indent/cancel_indent.js');
+
 const TEST = require('./api/TEST.js');
 
 
-const user_all_coupon = require('./api/coupons/all_coupons')
-
+const user_all_coupon = require('./api/coupons/all_coupons');
+const refund_indent = require('./api/indent/refund_indent.js');
+const all_system_coupon = require('./api/coupons/all_system_coupon');
+const edit_Product = require('./api/system/edit_Product.js');
+const all_integral = require('./api/rests/all_integral.js');
+const product_select = require('./api/user_select/product_select.js');
+const spike = require('./api/Spike_special/spike.js');
+const systemspike = require('./api/system/Spike_special/spike.js');
 // 测试通过==================> 用户各种杂七杂八操作
 router.post('/user/register', User_Register); //注册
 router.post('/user/login', User_Login); // 登录
@@ -127,6 +133,7 @@ router.post('/add_indent', add_indent)
 router.post('/pay_indent', pay_indent)
 
 router.post('/select_pay', select_pay)
+// 确认收货交易完成
 router.post('/receipt_indent', receipt_indent)
 
 // 其他接口 
@@ -165,16 +172,23 @@ router.post('/user/all_collect', all_collect)
 router.post('/user/delete_collect', delete_collect)
 
 // 用户兑换优惠券
-router.post('/user/exchange',exchange)
-router.get('/user/all_coupon',user_all_coupon)
+router.post('/user/exchange', exchange)
+router.get('/user/all_coupon', user_all_coupon)
 
 
 
-router.post('/user/cancel_indent',cancel_indent) // 取消订单
+router.post('/refund_indent', refund_indent) // 取消订单
 
+router.get('/all_system_coupon', all_system_coupon)
+router.post('/system/edit_product', edit_Product)
 
+router.get('/all_integral', all_integral)
 
-router.post('/test',TEST)
+router.get('/user/select_product', product_select)
+
+router.get('/spike',spike);
+router.post('/system/spike',systemspike)
+router.post('/test', TEST)
 // {
 //     "用户ID":{
 //         "客服ID":{

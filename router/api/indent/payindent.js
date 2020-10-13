@@ -27,6 +27,10 @@ module.exports = async function (req, res) {
     }
     if (!(Array.isArray(indent_collection))) {
         JSON.parse(indent_collection)
+        if (!(Array.isArray(indent_collection))) {
+            res.json({ code: 302 })
+            return
+        }
     }
     try {
         let result = await indent_order({ order: '待发货', username: req.tokenstate.content.username, indent_collection })

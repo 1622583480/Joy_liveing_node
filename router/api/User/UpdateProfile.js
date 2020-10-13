@@ -35,7 +35,7 @@ module.exports = async function (req, res) {
     for (let i in newuserINfo) {
         try {
             let result = await updateprofile({ key: i, value: newuserINfo[i], username: req.tokenstate.content.username })
-            if (result !== 204) {
+            if (result.code !== 204) {
                 res.json({code:104})
             }
         } catch (error) {

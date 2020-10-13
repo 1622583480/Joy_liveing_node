@@ -13,6 +13,16 @@ function system_product(params) {
         })
     })
 }
+function edit_product(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `update home_life set ${params.key}=? where id=?`
+        processing([parasm.value, params.id], sql, data => {
+            reslove({ code: 204 })
+        })
+    })
+
+}
 module.exports = {
-    system_product
+    system_product,
+    edit_product
 }
