@@ -21,7 +21,6 @@ const all_product = require('./api/product/all_product')
 const add_product = require('./api/product/add_product')
 const detele_product = require('./api/product/detele_product')
 const type_one = require('./api/product/type_one')
-const resvise_product = require('./api/product/resvise_product')
 
 const userlist = require('./api/system/userList')
 const all_indent = require('./api/system/all_indent')
@@ -105,15 +104,14 @@ router.post('/delete_address', deleteaddress)
 router.post('/revise_address', reviseaddress)
 
 
-// 商品的全部商品 根据type_one id page 获取商品 
+// 商品的全部商品 根据type_one id page 获取商品  删除商品
 router.get('/all_product', all_product)
 router.post('/add_product', add_product)
-router.get('/delete_product', detele_product)
-router.get('/type_one', type_one)
-router.get('/resvise_product', resvise_product)
+router.get('/delete_product', detele_product); // 后台用
+router.get('/type_one', type_one) 
 
 
-router.post('/token', token)
+router.post('/token', token); //token 验证接口
 
 
 // 获取用户列表 获取所有的订单
@@ -130,26 +128,20 @@ router.post('/system/select_user', select_user)
 // 条件获取订单 用于搜索
 router.post('/system/select_indent', select_indent)
 
+// 后台搜索商品
 router.post('/system/select_product', select_product)
 
 // 增加订单 订单支付 订单确认收货
-router.post('/add_indent', add_indent)
-router.post('/pay_indent', pay_indent)
+router.post('/add_indent', add_indent); //新增订单
+router.post('/pay_indent', pay_indent); // 订单支付
+router.post('/refund_indent', refund_indent) // 取消订单
 
-router.post('/select_pay', select_pay)
+
+
+
+router.post('/select_pay', select_pay); //搜索订单
 // 确认收货交易完成
 router.post('/receipt_indent', receipt_indent)
-
-// 其他接口 
-router.get('/may_you_like'); // 猜你喜欢
-// router.get(''); // 闪购
-// router.get(''); // 
-
-
-// router.post('/zfbpay', pay)
-// router.post('/zfsuccess', paysuccess)
-// router.post('/selectpay', selectpay)
-
 
 // 优惠券的增删改
 router.get('/all_coupon', all_coupon)
@@ -163,44 +155,42 @@ router.post('/user/all_shopcar', all_shopcar)
 router.post('/user/update_shopcar', update_shopcar)
 
 // 获取订单状态
-router.post('/user/all_indent', User_all_indent)
+router.post('/user/all_indent', User_all_indent); //所有订单
 router.post('/user/unpaid', unpaid); //待付款
 router.post('/user/delivered', delivered); // 待发货
 router.post('/user/received', received); // 待收货
 router.post('/user/comment', comment); // 待评价
 
 
-// 用户端收藏的增删查
+// 用户端收藏夹的增删查
 router.post('/user/add_collect', add_collect)
 router.post('/user/all_collect', all_collect)
 router.post('/user/delete_collect', delete_collect)
 
+
 // 用户兑换优惠券
-router.post('/user/exchange', exchange)
-router.get('/user/all_coupon', user_all_coupon)
+router.post('/user/exchange', exchange); // 优惠券兑换
+router.get('/user/all_coupon', user_all_coupon); //获取当前所有的优惠券
 
 
-
-router.post('/refund_indent', refund_indent) // 取消订单
-
-router.get('/all_system_coupon', all_system_coupon)
-router.post('/system/edit_product', edit_Product)
-
-router.get('/all_integral', all_integral)
-
-router.get('/user/select_product', product_select)
-
-router.get('/spike',spike);
+router.get('/all_system_coupon', all_system_coupon); //后台获取所有的订单 
+router.post('/system/edit_product', edit_Product); // 系统编辑商品
 
 
-router.post('/system/spike',systemspike)
-router.get('/service',service)
+// 积分接口
+router.get('/all_integral', all_integral); // 用户获取积分
 
-router.get('/like',you_like)
+router.get('/user/select_product', product_select); //用户搜索商品
 
-router.post('/test', TEST)
+router.get('/spike',spike); // 获取活动商品 闪购 特价
 
-router.post('/system/edit_indent',edit_indent);
-router.post('/system/deliver_indent',deliver_indent)
+
+router.post('/system/spike',systemspike); //系统获取商品 
+
+router.get('/like',you_like); //猜你喜欢 
+
+
+router.post('/system/edit_indent',edit_indent);  //修改订单
+router.post('/system/deliver_indent',deliver_indent); // 后台发货接口 
 
 module.exports = router

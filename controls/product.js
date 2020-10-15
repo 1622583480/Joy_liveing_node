@@ -101,11 +101,7 @@ function add_product(params) {
     })
 }
 
-function resvise_product(params) {
-    return new Promise((reslove, reject) => {
 
-    })
-}
 function rearrangement() {
     let sql = `alter table home_life drop id;`
     let sql_two = `alter table home_life add id int(11) primary key auto_increment first;`
