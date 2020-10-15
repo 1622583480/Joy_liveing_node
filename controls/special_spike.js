@@ -18,7 +18,7 @@ function user_spike(params) {
 function system_spike(params) {
     return new Promise((reslove, reject) => {
         let sql = `update home_life set spike_price=?,createtime=?,lostertime=?,type=? where id=?`
-        processing([params.spike_price, params.createtime, params.lostertime, params.type, params.id], sql, adta => {
+        processing([params.spike_price, params.createtime, params.lostertime, params.type, params.id], sql, data => {
             reslove({ code: 204, data })
         })
     })

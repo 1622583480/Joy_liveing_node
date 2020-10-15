@@ -1,5 +1,5 @@
 const {system_edit_address} = require('../../../controls/indent')
-module.exports = function (req, res) {
+module.exports =async function (req, res) {
     const { address,indent_collection } = req.fields
     if(typeof address =="undefined" || typeof indent_collection == "undefined"){
         res.json({code:301})

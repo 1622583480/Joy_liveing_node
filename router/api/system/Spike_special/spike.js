@@ -3,7 +3,7 @@ module.exports = async function (req, res) {
     const { Productobj } = req.fields
     if (Productobj.type == "spike" || Productobj.type == "special") {
         try {
-            let result = await system_spike({ Productobj })
+            let result = await system_spike( Productobj )
             res.json(result)
             return
         } catch (error) {
