@@ -1,10 +1,10 @@
 const { user_spike } = require('../../../controls/special_spike')
 module.exports = async function (req, res) {
-    const { type } = req.fields
+    const { type } = req.query;
     if (type == "spike" || type == "special") {
         try {
             let result = await user_spike({ type })
-            result.json(result)
+            res.json(result)
         } catch (error) {
             res.json(error)
         }

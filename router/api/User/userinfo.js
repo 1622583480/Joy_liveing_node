@@ -19,7 +19,7 @@ module.exports = function (req, res) {
         return
     }
     UserInfo([req.tokenstate.content.username], (result) => {
-        const { name, email, headpoto, synopsis, uuid, gender, datebirth, integral } = result.data
-        res.json({ code:result.code, data: { name, email, headpoto, synopsis, uuid, gender, datebirth, integral } })
+        const { username, name, email, headpoto, synopsis, uuid, gender, datebirth, integral } = result.data
+        res.json({ code:result.code, data: {username, name, email, headpoto, synopsis, uuid, gender, datebirth, integral } })
     })
 }

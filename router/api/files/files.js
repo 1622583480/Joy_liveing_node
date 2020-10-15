@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const { base } = require('../../../config/config')
+const fs = require('fs'); //处理本地文件
+const path = require('path');  //生成绝对路径
+const { base } = require('../../../config/config')  //项目根目录
 module.exports = function (req, res) {
-    if (!(req.files.length <= 0 || req.files == {})) {
+    if (!(req.files.length <= 0 || req.files == {})) {  
         Object.keys(req.files).forEach(key => {
             let matches = req.files[key].name.lastIndexOf(".");
             let ext = req.files[key].name.substr(matches);

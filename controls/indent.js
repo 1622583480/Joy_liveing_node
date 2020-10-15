@@ -160,7 +160,7 @@ function create_payment(params) {
 function add_integral(params) {
     return new Promise((reslove, reject) => {
         let sql = `update user set integral=? where username=?;`
-        processing([params.pay_integral, params.username], sql, data => {})
+        processing([params.pay_integral, params.username], sql, data => { })
     })
 }
 function all_integral(params) {
@@ -189,7 +189,14 @@ function confirm_receipt(params) {
     })
 }
 
-
+function delete_indent_notpay(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `delete from indent where detailid=? and user_id=?;`
+        processing([params.detailid, params.username], sql, data => {
+            reslove({ code: 204 })
+        })
+    })
+}
 
 // 后台管理系统的 =====> 
 function all_indent() {
@@ -212,6 +219,14 @@ function page_indent(params) {
         })
     })
 }
+function active_indents(params) {
+    return new Pormise((reslove, reject) => {
+        let sql = `update indent set orderstatus=? where user_id=? and indent_collection=?`
+        processing(params, sql, (data) => {
+            reslove({ code: 204 })
+        })
+    })
+}
 function id_indent(params) {
     return new Promise((reslove, reject) => {
         let sql = `select * from indent where user_id=?`
@@ -223,11 +238,11 @@ function id_indent(params) {
 function refund_indent(params) {
     return new Promise(async (reslove, reject) => {
         try {
-            let money = await pay_indent({ username: params.username, tally_order: params.tally_order })
-            let coupon = await refund_indents_clend({ all_price: money.all_price, username: params.username, tally_order: params.tally_order })
+            let money = await pay_indent({ username: params.username, detailid: params.detailid })
+            let coupon = await refund_indents_clend({ all_price: money.all_price, username: params.username, tally_order: money.tally_order })
             // reslove(coupon)
             if (coupon == 7204) {
-                let result = await delete_indent({ username: params.username, tally_order: params.tally_order })
+                let result = await delete_indent({ username: params.username, tally_order: money.tally_order })
                 reslove(result)
             }
         } catch (error) {
@@ -253,9 +268,25 @@ function user_indent(params) {
 }
 function pay_indent(params) {
     return new Promise((reslove, rejetc) => {
-        let sql = `select * from indent where user_id=? and tally_order=?;`
-        processing([params.username, params.tally_order], sql, (data) => {
+        let sql = `select * from indent where user_id=? and detailid=?;`
+        processing([params.username, params.detailid], sql, (data) => {
             reslove(data[0])
+        })
+    })
+}
+function system_edit_address(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `update indent set address=? where indent_collection=?;`
+        processing([params.address, params.indent_collection], sql, data => {
+            reslove({ code: 204 })
+        })
+    })
+}
+function deliver_indent(params) {
+    return new Promise((reslove, reject) => {
+        let sql = `update indent set orderstatus=?,waybill=? where detailid=?;`
+        processing([params.orderstatus, params.waybill, params.detailid], sql, data => {
+            reslove({ code: 204 })
         })
     })
 }
@@ -271,5 +302,9 @@ module.exports = {
     refund_indent,
     Delete_coupon,
     update_user_coupon,
-    all_integral
+    all_integral,
+    delete_indent_notpay,
+    active_indents,
+    system_edit_address,
+    deliver_indent
 }

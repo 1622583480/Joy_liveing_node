@@ -19,7 +19,9 @@ async function pay(params) {
     // 调用 setMethod 并传入 get，会返回可以跳转到支付页面的 url
     formData.setMethod('get')
     // 配置回调接口
+    
     formData.addField("notifyUrl", "https://www.sngblog.cn:7147/api/select_pay")
+    formData.addField("returnUrl", "https://www.sngblog.cn/home/personalcenter/myorder/awaitshipments")
     // 设置参数
     formData.addField('bizContent', {
         outTradeNo: params.tally_order,

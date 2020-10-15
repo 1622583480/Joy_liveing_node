@@ -8,6 +8,12 @@ module.exports = async function (req, res) {
     }
     for (let i in params) {
         params[i] = JSON.parse(params[i])
+        if (params.img_list == '') {
+            params.img_list = JSON.stringify([])
+        }
+    }
+    for (let i in params) {
+
         try {
             result = await edit_product({ key: i, value: params[i], id: params.id })
         } catch (error) {

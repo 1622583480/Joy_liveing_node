@@ -82,6 +82,10 @@ const all_integral = require('./api/rests/all_integral.js');
 const product_select = require('./api/user_select/product_select.js');
 const spike = require('./api/Spike_special/spike.js');
 const systemspike = require('./api/system/Spike_special/spike.js');
+const service = require('./api/service/service.js');
+const you_like = require('./api/product/you_like.js');
+const edit_indent = require('./api/system/edit_indent.js');
+const deliver_indent = require('./api/system/deliver_indent.js');
 // 测试通过==================> 用户各种杂七杂八操作
 router.post('/user/register', User_Register); //注册
 router.post('/user/login', User_Login); // 登录
@@ -187,38 +191,16 @@ router.get('/all_integral', all_integral)
 router.get('/user/select_product', product_select)
 
 router.get('/spike',spike);
-router.post('/system/spike',systemspike)
-router.post('/test', TEST)
-// {
-//     "用户ID":{
-//         "客服ID":{
-//             text:"聊天内容"
-//         },
-//         "客服ID":{
-//             text:"聊天内容"
-//         },
-//         "客服ID":{
-//             text:"聊天内容"
-//         },
-//         用户ID:{
-//             text:"聊天内容"
-//         }，
-//         "客服ID":{
-//             text:"聊天内容"
-//         },
-//         用户ID:{
-//             text:"聊天内容"
-//         }
-//     },
-//     "第二个用户ID":{
-//         "客服ID":{
-//             text:"聊天内容"
-//         },
-//         用户ID:{
-//             text:"聊天内容"
-//         }
-//     }
-// }
 
+
+router.post('/system/spike',systemspike)
+router.get('/service',service)
+
+router.get('/like',you_like)
+
+router.post('/test', TEST)
+
+router.post('/system/edit_indent',edit_indent);
+router.post('/system/deliver_indent',deliver_indent)
 
 module.exports = router
